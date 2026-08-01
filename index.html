@@ -3,7 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>HIIT TIMER</title>
+<title>HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）</title>
+<meta name="description" content="無料・広告なし・インストール不要のHIIT/タバタ用インターバルタイマー。ブラウザで開くだけ、オフラインでも動作。Free, ad-free interval timer for HIIT &amp; Tabata — no install, works offline.">
+<link rel="canonical" href="https://kazuomiya.github.io/hiit-timer/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HIIT Timer">
+<meta property="og:title" content="HIIT Timer — アプリを入れないインターバルタイマー">
+<meta property="og:description" content="無料・広告なし・アカウント不要。ブラウザで開くだけで使えるHIIT/タバタタイマー。オフライン対応、ホーム画面に追加すれば全画面。">
+<meta property="og:url" content="https://kazuomiya.github.io/hiit-timer/">
+<meta property="og:image" content="https://kazuomiya.github.io/hiit-timer/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"HIIT Timer","url":"https://kazuomiya.github.io/hiit-timer/","description":"Free, ad-free interval timer for HIIT & Tabata. No install, no account, works offline. 無料・広告なし・インストール不要のインターバルタイマー。","applicationCategory":"HealthApplication","operatingSystem":"Any","inLanguage":["ja","en"],"offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"author":{"@type":"Person","name":"Kazuo Miya"}}
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -103,6 +119,12 @@ body{
   transition:filter .15s;
 }
 #start:hover{filter:brightness(1.12)}
+#share{
+  margin:-12px auto 0;background:none;border:none;cursor:pointer;padding:6px 10px;
+  color:#7C859A;font-family:var(--util);font-size:11px;letter-spacing:.05em;
+  text-decoration:underline;text-underline-offset:3px;
+}
+#share:hover{color:var(--bone)}
 .hint{font-size:11px;color:#6C7488;letter-spacing:.05em;text-align:center;line-height:1.7}
 
 /* ---------- RUN ---------- */
@@ -190,6 +212,7 @@ html[lang="ja"] #phase{margin-bottom:.6vh}
     </div>
 
     <button id="start">Start</button>
+    <button id="share" type="button"></button>
     <p class="hint"><span id="hint1"></span><br><span id="hint2"></span><br><span id="awakeNote"></span></p>
   </section>
 
@@ -244,6 +267,8 @@ var I18N = {
     hint2:"Beeps on the last 3 seconds and at every phase change",
     awake:"The screen is kept awake while the timer runs",
     awakeNo:"The screen is kept awake while the timer runs (if it still sleeps, turn off auto-lock)",
+    share:"Share these settings as a link", copied:"Link copied",
+    docTitle:"HIIT Timer — free interval & Tabata timer, no install",
     dec:"Decrease", inc:"Increase",
     unitSec:"s", unitSet:"set", unitRound:"R",
     stop:"Stop", skip:"Skip", pause:"Pause", resume:"Resume", again:"Again",
@@ -261,6 +286,8 @@ var I18N = {
     hint2:"残り3秒とフェーズ切替でビープが鳴ります",
     awake:"実行中は画面スリープを抑制します",
     awakeNo:"実行中は画面スリープを抑制します(効かない場合は端末の自動ロックをオフに)",
+    share:"設定をリンクで共有", copied:"リンクをコピーしました",
+    docTitle:"HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）",
     dec:"減らす", inc:"増やす",
     unitSec:"秒", unitSet:"set", unitRound:"R",
     stop:"終了", skip:"スキップ", pause:"一時停止", resume:"再開", again:"もう一度",
@@ -621,10 +648,43 @@ document.addEventListener("keydown", function(e){
   if (e.key === "Escape" && run.classList.contains("on")) stopWorkout();
 });
 
+/* ---------- shared-settings URL (?p=10&w=20&r=10&rd=8&s=1&sr=60) ---------- */
+(function(){
+  try{
+    var q = new URLSearchParams(location.search);
+    var map = { p:"prep", w:"work", r:"rest", rd:"rounds", s:"sets", sr:"setRest" };
+    for (var k in map){
+      if (!q.has(k)) continue;
+      var v = parseInt(q.get(k), 10);
+      FIELDS.forEach(function(f){
+        if (f.key === map[k] && !isNaN(v)) S[f.key] = Math.min(f.max, Math.max(f.min, v));
+      });
+    }
+  }catch(e){}
+})();
+
+function shareSettings(){
+  var u = location.origin + location.pathname +
+    "?p=" + S.prep + "&w=" + S.work + "&r=" + S.rest +
+    "&rd=" + S.rounds + "&s=" + S.sets + "&sr=" + S.setRest;
+  if (navigator.share){
+    navigator.share({ title: "HIIT Timer", url: u }).catch(function(){});
+  } else if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(u).then(function(){
+      var b = el("share");
+      b.textContent = t().copied;
+      setTimeout(function(){ b.textContent = t().share; }, 1600);
+    }).catch(function(){});
+  }
+}
+el("share").addEventListener("click", shareSettings);
+
 /* ---------- language ---------- */
 function applyLang(){
   var d = t();
   document.documentElement.lang = LANG;
+  document.title = d.docTitle;
+  el("share").textContent = d.share;
   el("totalLabel").textContent = d.total;
   el("ebPresets").textContent = d.presets;
   el("ebSettings").textContent = d.settings;

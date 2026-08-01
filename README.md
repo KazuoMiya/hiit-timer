@@ -11,6 +11,17 @@ The first launch follows the device language; after that the choice is remembere
 All UI strings live in the `I18N` object in `index.html` — add a locale there and to the
 button group in the masthead to support another language.
 
+## Sharing settings
+
+"Share these settings as a link" under the Start button copies a URL that encodes the
+current configuration, e.g. `?p=10&w=20&r=10&rd=8&s=1&sr=60`
+(prep / work / rest / rounds / sets / set-rest, all clamped to valid ranges on load).
+Anyone opening the link gets those settings pre-filled — no account needed.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
 ## Files
 
 | File | Purpose |
