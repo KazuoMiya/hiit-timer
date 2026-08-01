@@ -1,4 +1,4 @@
-var CACHE = "hiit-timer-v1";
+var CACHE = "hiit-timer-v2";
 var ASSETS = [
   "./",
   "./index.html",
@@ -27,7 +27,7 @@ self.addEventListener("activate", function(e){
   );
 });
 
-/* キャッシュ優先。オフラインのジムでも起動できるようにする */
+/* Cache first, so the app still starts in a gym with no signal */
 self.addEventListener("fetch", function(e){
   if (e.request.method !== "GET") return;
   e.respondWith(

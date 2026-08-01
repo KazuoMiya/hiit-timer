@@ -1,68 +1,77 @@
 # HIIT Timer
 
-インターバルトレーニング用のタイマー。iPhoneのホーム画面に追加してPWAとして使う。
+An interval training timer. Add it to the iPhone home screen and use it as a PWA.
 
-## 構成
+## Language
 
-| ファイル | 役割 |
+English and Japanese, switchable with the EN / JA buttons in the top right.
+The first launch follows the device language; after that the choice is remembered in
+`localStorage` under `hiit-lang`. Switching works mid-workout without disturbing the timer.
+
+All UI strings live in the `I18N` object in `index.html` — add a locale there and to the
+button group in the masthead to support another language.
+
+## Files
+
+| File | Purpose |
 | --- | --- |
-| `index.html` | 本体(HTML/CSS/JSすべて内包) |
-| `manifest.webmanifest` | アプリ名・アイコン・全画面表示の定義 |
-| `sw.js` | Service Worker(オフライン動作) |
-| `icon-180.png` | iOSホーム画面アイコン |
-| `icon-192.png` / `icon-512.png` | Android・その他用 |
-| `icon-maskable-512.png` | マスク対応アイコン |
-| `.nojekyll` | GitHub PagesのJekyll処理を無効化 |
+| `index.html` | The app itself (HTML/CSS/JS all inline) |
+| `manifest.webmanifest` | App name, icons, full-screen display |
+| `sw.js` | Service worker (offline support) |
+| `icon-180.png` | iOS home screen icon |
+| `icon-192.png` / `icon-512.png` | Android and everything else |
+| `icon-maskable-512.png` | Maskable icon |
+| `.nojekyll` | Disables Jekyll processing on GitHub Pages |
 
-## GitHub Pagesでの公開
+## Publishing on GitHub Pages
 
-1. GitHubで空のリポジトリ `hiit-timer` を作成(Public、READMEやライセンスは追加しない)
-2. このフォルダで以下を実行
+1. Create an empty repository `hiit-timer` on GitHub (Public, no README or license)
+2. Run this from this folder:
 
    ```sh
    git remote add origin https://github.com/KazuoMiya/hiit-timer.git
    git push -u origin main
    ```
 
-3. リポジトリの Settings → Pages を開く
-4. Source を `Deploy from a branch`、Branch を `main` / `(root)` にして Save
-5. 1〜2分待つと `https://kazuomiya.github.io/hiit-timer/` が公開される
+3. Open Settings → Pages in the repository
+4. Set Source to `Deploy from a branch`, Branch to `main` / `(root)`, then Save
+5. After a minute or two, `https://kazuomiya.github.io/hiit-timer/` goes live
 
-## iPhoneへの追加
+## Adding it to an iPhone
 
-1. **Safari** で公開URLを開く(Chromeではホーム画面に追加できない)
-2. 数秒待つ(Service Workerがキャッシュを作る)
-3. 共有ボタン → ホーム画面に追加 → 追加
+1. Open the published URL in **Safari** (Chrome can't add to the home screen)
+2. Wait a few seconds (the service worker builds its cache)
+3. Share button → Add to Home Screen → Add
 
-ホーム画面のアイコンから起動すると、Safariのバーが消えて全画面になる。
-初回起動後はオフラインでも動作するため、ジムの電波状況は関係ない。
+Launching from the home screen icon hides the Safari bars and runs full screen.
+After the first launch it works offline, so gym reception doesn't matter.
 
-## 動作条件
+## Requirements
 
-Service WorkerとScreen Wake Lock APIはHTTPS上でのみ動作する。
-`file://` で直接開いた場合、ホーム画面追加もオフライン動作も機能しない。
+The service worker and the Screen Wake Lock API only work over HTTPS.
+Opening the file directly via `file://` breaks both home screen install and offline support.
 
-画面が消えてしまう場合は、設定 → 画面表示と明るさ → 自動ロック → なし。
+If the screen still turns off, go to Settings → Display & Brightness → Auto-Lock → Never.
 
-## 更新のしかた
+## Updating
 
-ファイルを編集したあと、`sw.js` の1行目のキャッシュ名を上げてからpushする。
+After editing files, bump the cache name on the first line of `sw.js`, then push.
 
 ```js
 var CACHE = "hiit-timer-v2";   // v1 → v2
 ```
 
-これをしないと、端末に残った古いキャッシュが使われ続けて変更が反映されない。
+Skip this and devices keep serving the old cache, so the changes never show up.
 
 ```sh
 git add -A
-git commit -m "説明"
+git commit -m "description"
 git push
 ```
 
-## ネイティブアプリ化
+## Shipping it as a native app
 
-Capacitorで包む場合。
+To wrap it with Capacitor:
 
 ```sh
 npm install -D @capacitor/cli
@@ -71,5 +80,5 @@ npx cap add ios
 npx cap open ios
 ```
 
-自分の端末に入れるだけなら無料のApple ID署名で可能だが、7日ごとに再署名が必要。
-恒久的に使う、または配布するなら Apple Developer Program(年額99ドル)が要る。
+Installing it on your own device works with free Apple ID signing, but needs re-signing every 7 days.
+For permanent use or distribution you need the Apple Developer Program ($99/year).

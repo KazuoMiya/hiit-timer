@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
@@ -48,13 +48,23 @@ body{
   display:flex;flex-direction:column;gap:26px;
   max-width:560px;margin:0 auto;
 }
-.masthead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid #2A303C;padding-bottom:12px}
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:1px solid #2A303C;padding-bottom:12px}
 .masthead h1{
   font-family:var(--display);font-weight:700;font-size:clamp(30px,9vw,44px);
   letter-spacing:.06em;line-height:1;text-transform:uppercase;
 }
+.mhright{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
 .masthead .total{font-size:12px;letter-spacing:.12em;color:#8A93A6;white-space:nowrap}
 .masthead .total b{color:var(--prep);font-weight:600}
+
+#lang{display:flex;border:1px solid #2E3644;border-radius:2px;overflow:hidden}
+#lang button{
+  background:transparent;border:none;color:#7C859A;cursor:pointer;
+  font-family:var(--util);font-size:11px;letter-spacing:.1em;padding:5px 9px;
+}
+#lang button + button{border-left:1px solid #2E3644}
+#lang button:hover{color:var(--bone)}
+#lang button[aria-pressed="true"]{background:var(--bone);color:var(--ink);font-weight:600}
 
 .eyebrow{font-size:10px;letter-spacing:.22em;color:#7C859A;text-transform:uppercase;margin-bottom:10px}
 
@@ -66,8 +76,8 @@ body{
 }
 .preset:hover{border-color:#4A5468}
 .preset[aria-pressed="true"]{border-color:var(--prep);background:#221D12}
-.preset .pn{font-family:var(--display);font-size:17px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
-.preset .pd{font-size:11px;color:#8A93A6;margin-top:3px;letter-spacing:.04em}
+.preset .pn{display:block;font-family:var(--display);font-size:17px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.preset .pd{display:block;font-size:11px;color:#8A93A6;margin-top:3px;letter-spacing:.04em}
 
 .rows{display:flex;flex-direction:column}
 .row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid #212734}
@@ -122,6 +132,8 @@ body{
   font-size:clamp(22px,7vw,40px);letter-spacing:.3em;text-transform:uppercase;
   opacity:.8;margin-bottom:-2vh;
 }
+/* CJK glyphs fill the full em box, so the tight Latin overlap has to be undone */
+html[lang="ja"] #phase{margin-bottom:.6vh}
 #clock{
   font-family:var(--display);font-weight:700;
   font-size:min(42vw,30vh);line-height:.86;
@@ -158,39 +170,45 @@ body{
   <section id="setup">
     <div class="masthead">
       <h1>HIIT Timer</h1>
-      <div class="total">合計 <b id="totalTime">--:--</b></div>
+      <div class="mhright">
+        <div id="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          <button type="button" data-lang="ja" aria-pressed="false">JA</button>
+        </div>
+        <div class="total"><span id="totalLabel">TOTAL</span> <b id="totalTime">--:--</b></div>
+      </div>
     </div>
 
     <div>
-      <div class="eyebrow">プリセット</div>
+      <div class="eyebrow" id="ebPresets">Presets</div>
       <div class="presets" id="presets"></div>
     </div>
 
     <div>
-      <div class="eyebrow">設定</div>
+      <div class="eyebrow" id="ebSettings">Settings</div>
       <div class="rows" id="rows"></div>
     </div>
 
-    <button id="start">開始する</button>
-    <p class="hint">画面タップまたはスペースキーで一時停止<br>残り3秒とフェーズ切替でビープが鳴ります<br><span id="awakeNote"></span></p>
+    <button id="start">Start</button>
+    <p class="hint"><span id="hint1"></span><br><span id="hint2"></span><br><span id="awakeNote"></span></p>
   </section>
 
   <section id="run" data-phase="prep">
     <div id="bar"><i></i></div>
     <div class="topline">
       <span id="roundLabel">R 1/8</span>
-      <span id="remainLabel">残り 00:00</span>
+      <span id="remainLabel">LEFT 00:00</span>
     </div>
     <div class="stage" id="stage">
-      <div id="phase">準備</div>
+      <div id="phase">PREP</div>
       <div id="clock">10</div>
       <div id="nextup"></div>
     </div>
     <div id="pips"></div>
     <div class="controls">
-      <button id="btnStop">終了</button>
-      <button id="btnSkip">スキップ</button>
-      <button id="btnPause" class="primary">一時停止</button>
+      <button id="btnStop">Stop</button>
+      <button id="btnSkip">Skip</button>
+      <button id="btnPause" class="primary">Pause</button>
     </div>
   </section>
 
@@ -203,22 +221,61 @@ body{
 var S = { prep:10, work:20, rest:10, rounds:8, sets:1, setRest:60 };
 
 var PRESETS = [
-  { name:"タバタ",     desc:"20秒 / 10秒 × 8",   s:{prep:10,work:20,rest:10,rounds:8,sets:1,setRest:60} },
-  { name:"クラシック", desc:"40秒 / 20秒 × 10",  s:{prep:15,work:40,rest:20,rounds:10,sets:1,setRest:60} },
-  { name:"ボクシング", desc:"3分 / 1分 × 3R",    s:{prep:10,work:180,rest:60,rounds:3,sets:1,setRest:60} },
-  { name:"スプリント", desc:"30秒 / 30秒 × 6×2", s:{prep:15,work:30,rest:30,rounds:6,sets:2,setRest:90} }
+  { s:{prep:10,work:20, rest:10,rounds:8, sets:1,setRest:60} },
+  { s:{prep:15,work:40, rest:20,rounds:10,sets:1,setRest:60} },
+  { s:{prep:10,work:180,rest:60,rounds:3, sets:1,setRest:60} },
+  { s:{prep:15,work:30, rest:30,rounds:6, sets:2,setRest:90} }
 ];
 
 var FIELDS = [
-  { key:"prep",    label:"準備",         step:5, min:0,  max:120,  time:true },
-  { key:"work",    label:"運動",         step:5, min:5,  max:600,  time:true },
-  { key:"rest",    label:"休憩",         step:5, min:0,  max:600,  time:true },
-  { key:"rounds",  label:"ラウンド数",   step:1, min:1,  max:30,   time:false },
-  { key:"sets",    label:"セット数",     step:1, min:1,  max:10,   time:false },
-  { key:"setRest", label:"セット間休憩", step:15,min:0,  max:600,  time:true }
+  { key:"prep",    step:5, min:0, max:120, time:true },
+  { key:"work",    step:5, min:5, max:600, time:true },
+  { key:"rest",    step:5, min:0, max:600, time:true },
+  { key:"rounds",  step:1, min:1, max:30,  time:false },
+  { key:"sets",    step:1, min:1, max:10,  time:false },
+  { key:"setRest", step:15,min:0, max:600, time:true }
 ];
 
-var LABEL = { prep:"準備", work:"運動", rest:"休憩", setrest:"セット間休憩", done:"完了" };
+/* ---------- i18n ---------- */
+var I18N = {
+  en: {
+    total:"TOTAL", presets:"Presets", settings:"Settings", start:"Start",
+    hint1:"Tap the screen or press Space to pause",
+    hint2:"Beeps on the last 3 seconds and at every phase change",
+    awake:"The screen is kept awake while the timer runs",
+    awakeNo:"The screen is kept awake while the timer runs (if it still sleeps, turn off auto-lock)",
+    dec:"Decrease", inc:"Increase",
+    unitSec:"s", unitSet:"set", unitRound:"R",
+    stop:"Stop", skip:"Skip", pause:"Pause", resume:"Resume", again:"Again",
+    left:"LEFT", next:"NEXT: ", finalRound:"FINAL ROUND", getReady:"GET READY",
+    doneTitle:"NICE WORK",
+    doneSub:function(n, total){ return n + " ROUNDS DONE / " + total; },
+    phase:{ prep:"PREP", work:"WORK", rest:"REST", setrest:"SET REST", done:"DONE" },
+    fields:{ prep:"Prep", work:"Work", rest:"Rest", rounds:"Rounds", sets:"Sets", setRest:"Set rest" },
+    presetName:["Tabata","Classic","Boxing","Sprint"],
+    presetDesc:["20s / 10s × 8","40s / 20s × 10","3min / 1min × 3R","30s / 30s × 6×2"]
+  },
+  ja: {
+    total:"合計", presets:"プリセット", settings:"設定", start:"開始する",
+    hint1:"画面タップまたはスペースキーで一時停止",
+    hint2:"残り3秒とフェーズ切替でビープが鳴ります",
+    awake:"実行中は画面スリープを抑制します",
+    awakeNo:"実行中は画面スリープを抑制します(効かない場合は端末の自動ロックをオフに)",
+    dec:"減らす", inc:"増やす",
+    unitSec:"秒", unitSet:"set", unitRound:"R",
+    stop:"終了", skip:"スキップ", pause:"一時停止", resume:"再開", again:"もう一度",
+    left:"残り", next:"次: ", finalRound:"ラストラウンド", getReady:"スタート前",
+    doneTitle:"お疲れさま",
+    doneSub:function(n, total){ return n + " ラウンド完了 / " + total; },
+    phase:{ prep:"準備", work:"運動", rest:"休憩", setrest:"セット間休憩", done:"完了" },
+    fields:{ prep:"準備", work:"運動", rest:"休憩", rounds:"ラウンド数", sets:"セット数", setRest:"セット間休憩" },
+    presetName:["タバタ","クラシック","ボクシング","スプリント"],
+    presetDesc:["20秒 / 10秒 × 8","40秒 / 20秒 × 10","3分 / 1分 × 3R","30秒 / 30秒 × 6×2"]
+  }
+};
+
+var LANG = "en";
+function t(){ return I18N[LANG]; }
 
 var el = function(id){ return document.getElementById(id); };
 var setup = el("setup"), run = el("run");
@@ -261,8 +318,8 @@ function renderSetup(){
     b.setAttribute("aria-pressed", "false");
     b.dataset.i = i;
     b.innerHTML = '<span class="pn"></span><span class="pd"></span>';
-    b.querySelector(".pn").textContent = p.name;
-    b.querySelector(".pd").textContent = p.desc;
+    b.querySelector(".pn").textContent = t().presetName[i];
+    b.querySelector(".pd").textContent = t().presetDesc[i];
     b.addEventListener("click", function(){
       for (var k in p.s) S[k] = p.s[k];
       syncSetup();
@@ -278,11 +335,11 @@ function renderSetup(){
     row.innerHTML =
       '<span class="lab"></span>' +
       '<span class="stepper">' +
-        '<button type="button" data-d="-1" aria-label="減らす">−</button>' +
+        '<button type="button" data-d="-1" aria-label="' + t().dec + '">−</button>' +
         '<span class="val"></span>' +
-        '<button type="button" data-d="1" aria-label="増やす">+</button>' +
+        '<button type="button" data-d="1" aria-label="' + t().inc + '">+</button>' +
       '</span>';
-    row.querySelector(".lab").textContent = f.label;
+    row.querySelector(".lab").textContent = t().fields[f.key];
     row.dataset.key = f.key;
     row.querySelectorAll("button").forEach(function(btn){
       btn.addEventListener("click", function(){
@@ -301,8 +358,8 @@ function syncSetup(){
     var row = document.querySelector('.row[data-key="' + f.key + '"]');
     var v = S[f.key];
     row.querySelector(".val").innerHTML = f.time
-      ? fmtShort(v) + '<u>' + (v>=60 ? "" : "秒") + '</u>'
-      : v + '<u>' + (f.key === "sets" ? "set" : "R") + '</u>';
+      ? fmtShort(v) + '<u>' + (v>=60 ? "" : t().unitSec) + '</u>'
+      : v + '<u>' + (f.key === "sets" ? t().unitSet : t().unitRound) + '</u>';
   });
   document.querySelectorAll(".preset").forEach(function(b){
     var p = PRESETS[+b.dataset.i].s, same = true;
@@ -335,7 +392,7 @@ function cue(kind){
 }
 function buzz(p){ try{ if (navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 
-/* ---------- スリープ防止 ---------- */
+/* ---------- keep the screen awake ---------- */
 var MP4 = "data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAMvbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAlgAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAll0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAlgAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAACAAAAAgAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAJYAAAAAAABAAAAAAHRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAAAoAAAAGABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABfG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAATxzdGJsAAAAuHN0c2QAAAAAAAAAAQAAAKhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACAAIABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALmF2Y0MBQsAe/+EAFmdCwB7ZCWwEQAAAAwBAAAADAoPFi5IBAAVoy4DksgAAABBwYXNwAAAAAQAAAAEAAAAUYnRydAAAAAAAACKiAAAiogAAABhzdHRzAAAAAAAAAAEAAAADAAAIAAAAABRzdHNzAAAAAAAAAAEAAAABAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAADAAAAAQAAACBzdHN6AAAAAAAAAAAAAAADAAAChQAAAAoAAAAKAAAAFHN0Y28AAAAAAAAAAQAAA18AAABidWR0YQAAAFptZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAAC1pbHN0AAAAJal0b28AAAAdZGF0YQAAAAEAAAAATGF2ZjYwLjE2LjEwMAAAAAhmcmVlAAACoW1kYXQAAAJwBgX//2zcRem95tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTY0IHIzMTA4IDMxZTE5ZjkgLSBILjI2NC9NUEVHLTQgQVZDIGNvZGVjIC0gQ29weWxlZnQgMjAwMy0yMDIzIC0gaHR0cDovL3d3dy52aWRlb2xhbi5vcmcveDI2NC5odG1sIC0gb3B0aW9uczogY2FiYWM9MCByZWY9MyBkZWJsb2NrPTE6MDowIGFuYWx5c2U9MHgxOjB4MTExIG1lPWhleCBzdWJtZT03IHBzeT0xIHBzeV9yZD0xLjAwOjAuMDAgbWl4ZWRfcmVmPTEgbWVfcmFuZ2U9MTYgY2hyb21hX21lPTEgdHJlbGxpcz0xIDh4OGRjdD0wIGNxbT0wIGRlYWR6b25lPTIxLDExIGZhc3RfcHNraXA9MSBjaHJvbWFfcXBfb2Zmc2V0PS0yIHRocmVhZHM9MSBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTAgd2VpZ2h0cD0wIGtleWludD0yNTAga2V5aW50X21pbj01IHNjZW5lY3V0PTQwIGludHJhX3JlZnJlc2g9MCByY19sb29rYWhlYWQ9NDAgcmM9Y3JmIG1idHJlZT0xIGNyZj00MC4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAADWWIhAR8mKAAItsnXXgAAAAGQZo4CHlgAAAABkGaVAf5YA==";
 var WEBM = "data:video/webm;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAAIREU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHYTbuMU6uEElTDZ1OsggEeTbuMU6uEHFO7a1OsggH77AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsirXsYMPQkBNgI1MYXZmNjAuMTYuMTAwV0GNTGF2ZjYwLjE2LjEwMESJiECCwAAAAAAAFlSua8GuAQAAAAAAADjXgQFzxYiMEoazVDn2ZpyBACK1nIN1bmSIgQCGhVZfVlA4g4EBI+ODhAvrwgDgibCBILqBIJqBAhJUw2f8c3OgY8CAZ8iaRaOHRU5DT0RFUkSHjUxhdmY2MC4xNi4xMDBzc9ZjwItjxYiMEoazVDn2ZmfIoUWjh0VOQ09ERVJEh5RMYXZjNjAuMzEuMTAyIGxpYnZweGfIoUWjiERVUkFUSU9ORIeTMDA6MDA6MDAuNjAwMDAwMDAwAB9DtnXX54EAo6SBAACAMAIAnQEqIAAgAABHCIWFiIWEiAICAAeQ88nA/v+rUICjlYEAyACxAQAHEOwAGAAYWC/0AAhwAKOVgQGQALEBAAcQ7AAYABhYL/QACHAAHFO7a5G7j7OBALeK94EB8YIBn/CBAw==";
 
@@ -357,7 +414,7 @@ function keepAwake(on){
     } else if (lock){ lock.release().catch(function(){}); lock = null; }
   }catch(e){}
 
-  /* 2) 極小ループ動画の再生(動画再生中は自動ロックされない挙動を利用) */
+  /* 2) play a tiny looping video (devices don't auto-lock while a video plays) */
   try{
     if (on){
       vid.muted = true;
@@ -369,7 +426,7 @@ function keepAwake(on){
     }
   }catch(e){}
 
-  /* 3) 無音キープアライブ(万一ロックされても計測と音は継続させる) */
+  /* 3) silent keep-alive tone (keeps timing and audio running even if the screen locks) */
   try{
     if (on && ac && !silentOsc){
       silentOsc = ac.createOscillator();
@@ -410,7 +467,7 @@ function startWorkout(){
   setup.style.display = "none";
   run.classList.add("on");
   run.classList.remove("paused");
-  el("btnPause").textContent = "一時停止";
+  el("btnPause").textContent = pauseLabel();
   buildPips();
   enterPhase(0, true);
   keepAwake(true);
@@ -424,19 +481,39 @@ function enterPhase(idx, silent, anchor){
   T.endAt = (typeof anchor === "number" ? anchor : performance.now()) + p.d * 1000;
   T.lastTick = -1;
   run.dataset.phase = p.t;
-  el("phase").textContent = LABEL[p.t];
   if (!silent) cue(p.t === "work" ? "work" : "rest");
 
-  var rl = "";
-  if (p.t === "prep") rl = "スタート前";
-  else rl = "R " + p.round + "/" + S.rounds + (S.sets > 1 ? "   SET " + p.set + "/" + S.sets : "");
-  el("roundLabel").textContent = rl;
-
-  var nx = T.phases[idx+1];
-  el("nextup").textContent = nx ? "次: " + LABEL[nx.t] + " " + fmtShort(nx.d) : "ラストラウンド";
-
+  renderRunLabels();
   updatePips();
   paint(p.d);
+}
+
+/* every language-dependent string on the run screen, redrawn from the current state */
+function pauseLabel(){
+  if (run.classList.contains("on") && !T.active) return t().again;   /* workout finished */
+  return T.paused ? t().resume : t().pause;
+}
+function renderRunLabels(){
+  el("btnStop").textContent = t().stop;
+  el("btnSkip").textContent = t().skip;
+  el("btnPause").textContent = pauseLabel();
+  if (!run.classList.contains("on")) return;
+
+  if (!T.active){
+    el("phase").textContent = t().doneTitle;
+    el("nextup").textContent = t().doneSub(S.rounds * S.sets, fmt(totalSeconds()));
+    el("remainLabel").textContent = t().left + " 0:00";
+    return;
+  }
+
+  var p = T.phases[T.i];
+  el("phase").textContent = t().phase[p.t];
+  el("roundLabel").textContent = p.t === "prep"
+    ? t().getReady
+    : "R " + p.round + "/" + S.rounds + (S.sets > 1 ? "   SET " + p.set + "/" + S.sets : "");
+
+  var nx = T.phases[T.i + 1];
+  el("nextup").textContent = nx ? t().next + t().phase[nx.t] + " " + fmtShort(nx.d) : t().finalRound;
 }
 
 function paint(left){
@@ -447,7 +524,7 @@ function paint(left){
 
   var rest = left;
   for (var k = T.i + 1; k < T.phases.length; k++) rest += T.phases[k].d;
-  el("remainLabel").textContent = "残り " + fmt(rest);
+  el("remainLabel").textContent = t().left + " " + fmt(rest);
 }
 
 function buildPips(){
@@ -475,7 +552,7 @@ function loop(){
 
   var now = performance.now(), guard = 0;
 
-  /* 画面ロックなどで進行が止まっていた場合も、実時間どおりの位置まで追いつく */
+  /* catch up to wall-clock position even if progress stalled (e.g. the screen locked) */
   while (now >= T.endAt && guard++ < 3000){
     if (T.i + 1 < T.phases.length){
       var anchor = T.endAt;
@@ -501,12 +578,9 @@ function finish(){
   T.active = false;
   cancelAnimationFrame(T.raf);
   run.dataset.phase = "done";
-  el("phase").textContent = "お疲れさま";
   el("clock").textContent = "✓";
-  el("nextup").textContent = S.rounds * S.sets + " ラウンド完了 / " + fmt(totalSeconds());
-  el("remainLabel").textContent = "残り 0:00";
   el("bar").firstElementChild.style.transform = "scaleX(0)";
-  el("btnPause").textContent = "もう一度";
+  renderRunLabels();
   cue("done");
   keepAwake(false);
 }
@@ -521,7 +595,7 @@ function togglePause(){
   }
   keepAwake(true);
   run.classList.toggle("paused", T.paused);
-  el("btnPause").textContent = T.paused ? "再開" : "一時停止";
+  el("btnPause").textContent = pauseLabel();
 }
 
 function stopWorkout(){
@@ -530,7 +604,7 @@ function stopWorkout(){
   keepAwake(false);
   run.classList.remove("on", "paused");
   setup.style.display = "";
-  el("btnPause").textContent = "一時停止";
+  el("btnPause").textContent = pauseLabel();
 }
 
 /* ---------- events ---------- */
@@ -547,16 +621,48 @@ document.addEventListener("keydown", function(e){
   if (e.key === "Escape" && run.classList.contains("on")) stopWorkout();
 });
 
-renderSetup();
+/* ---------- language ---------- */
+function applyLang(){
+  var d = t();
+  document.documentElement.lang = LANG;
+  el("totalLabel").textContent = d.total;
+  el("ebPresets").textContent = d.presets;
+  el("ebSettings").textContent = d.settings;
+  el("start").textContent = d.start;
+  el("hint1").textContent = d.hint1;
+  el("hint2").textContent = d.hint2;
+  el("awakeNote").textContent = ("wakeLock" in navigator) ? d.awake : d.awakeNo;
+  el("lang").querySelectorAll("button").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.lang === LANG ? "true" : "false");
+  });
+  renderSetup();
+  renderRunLabels();
+  if (T.active) paint(T.paused ? T.left : (T.endAt - performance.now()) / 1000);
+}
+
+function setLang(l){
+  LANG = (l === "ja") ? "ja" : "en";
+  try{ localStorage.setItem("hiit-lang", LANG); }catch(e){}
+  applyLang();
+}
+
+var saved = null;
+try{ saved = localStorage.getItem("hiit-lang"); }catch(e){}
+LANG = saved === "ja" || saved === "en"
+  ? saved
+  : (/^ja/i.test(navigator.language || "") ? "ja" : "en");
+
+el("lang").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click", function(){ setLang(b.dataset.lang); });
+});
+
+applyLang();
 if ("serviceWorker" in navigator){
   window.addEventListener("load", function(){
     navigator.serviceWorker.register("sw.js").catch(function(){});
   });
 }
 document.addEventListener("gesturestart", function(e){ e.preventDefault(); });
-el("awakeNote").textContent = ("wakeLock" in navigator)
-  ? "実行中は画面スリープを抑制します"
-  : "実行中は画面スリープを抑制します(効かない場合は端末の自動ロックをオフに)";
 })();
 </script>
 </body>

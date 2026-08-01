@@ -1,14 +1,14 @@
 {
   "name": "HIIT Timer",
   "short_name": "HIIT",
-  "description": "インターバルトレーニング用タイマー",
+  "description": "Interval training timer",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#101319",
   "theme_color": "#101319",
-  "lang": "ja",
+  "lang": "en",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
