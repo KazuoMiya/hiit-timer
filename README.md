@@ -46,7 +46,9 @@ MIT — see [LICENSE](LICENSE).
 
 3. Open Settings → Pages in the repository
 4. Set Source to `Deploy from a branch`, Branch to `main` / `(root)`, then Save
-5. After a minute or two, `https://kazuomiya.github.io/hiit-timer/` goes live
+5. After a minute or two the site goes live — this repo serves at
+   `https://timer.nexus-code.studio/` (custom domain via the `CNAME` file;
+   `kazuomiya.github.io/hiit-timer` redirects there)
 
 ## Adding it to an iPhone
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kazuomiya.github.io/hiit-timer/sitemap.xml
+Sitemap: https://timer.nexus-code.studio/sitemap.xml
