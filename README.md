@@ -18,6 +18,27 @@ current configuration, e.g. `?p=10&w=20&r=10&rd=8&s=1&sr=60`
 (prep / work / rest / rounds / sets / set-rest, all clamped to valid ranges on load).
 Anyone opening the link gets those settings pre-filled — no account needed.
 
+## Analytics
+
+[GoatCounter](https://www.goatcounter.com) at `nexuscode.goatcounter.com`. No cookies, no
+unique identifiers, no cross-site tracking — so no consent banner is required. It counts
+page views plus four usage events, fired through the `track()` helper in `index.html`:
+
+| Event | Fires when |
+| --- | --- |
+| `start-workout` | Start is pressed |
+| `finish-workout` | The last round completes |
+| `share-link` | The share button is used |
+| `launch-installed` | Opened from the home screen (`display-mode: standalone`) |
+
+Together these give a funnel: visits → starts → finishes, plus how many installs stuck.
+`track()` is a no-op if the script is blocked or the device is offline, and GoatCounter
+skips localhost on its own, so local testing never reaches the real stats.
+
+Note that `sw.js` deliberately ignores cross-origin requests. Without that guard the
+cache-first handler would serve the analytics beacon from cache and counting would
+silently stop.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

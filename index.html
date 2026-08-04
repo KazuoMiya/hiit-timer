@@ -28,6 +28,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
+<script data-goatcounter="https://nexuscode.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -477,6 +479,15 @@ document.addEventListener("visibilitychange", function(){
   }
 });
 
+/* ---------- usage events (GoatCounter, no cookies, no identifiers) ---------- */
+function track(name){
+  try{
+    if (window.goatcounter && window.goatcounter.count){
+      window.goatcounter.count({ path: name, title: name, event: true });
+    }
+  }catch(e){}
+}
+
 /* ---------- timer ---------- */
 var T = { phases:[], i:0, endAt:0, left:0, paused:false, active:false, lastTick:-1, raf:0, workTotal:0, workIdx:0 };
 
@@ -484,6 +495,7 @@ function startWorkout(){
   T.phases = buildPhases();
   if (!T.phases.length) return;
   T.workTotal = T.phases.filter(function(p){ return p.t === "work"; }).length;
+  track("start-workout");
 
   try{
     ac = new (window.AudioContext || window.webkitAudioContext)();
@@ -610,6 +622,7 @@ function finish(){
   renderRunLabels();
   cue("done");
   keepAwake(false);
+  track("finish-workout");
 }
 
 function togglePause(){
@@ -664,6 +677,7 @@ document.addEventListener("keydown", function(e){
 })();
 
 function shareSettings(){
+  track("share-link");
   var u = location.origin + location.pathname +
     "?p=" + S.prep + "&w=" + S.work + "&r=" + S.rest +
     "&rd=" + S.rounds + "&s=" + S.sets + "&sr=" + S.setRest;
@@ -717,6 +731,14 @@ el("lang").querySelectorAll("button").forEach(function(b){
 });
 
 applyLang();
+
+/* launched from the home screen rather than a browser tab = an install that stuck */
+try{
+  if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches){
+    track("launch-installed");
+  }
+}catch(e){}
+
 if ("serviceWorker" in navigator){
   window.addEventListener("load", function(){
     navigator.serviceWorker.register("sw.js").catch(function(){});

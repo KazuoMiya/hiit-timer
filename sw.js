@@ -1,4 +1,4 @@
-var CACHE = "hiit-timer-v4";
+var CACHE = "hiit-timer-v5";
 var ASSETS = [
   "./",
   "./index.html",
@@ -30,6 +30,9 @@ self.addEventListener("activate", function(e){
 /* Cache first, so the app still starts in a gym with no signal */
 self.addEventListener("fetch", function(e){
   if (e.request.method !== "GET") return;
+  /* Only own assets. Cross-origin (analytics beacons, fonts) must reach the
+     network every time — caching them would silently break counting. */
+  if (new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith(
     caches.match(e.request).then(function(hit){
       if (hit) return hit;
