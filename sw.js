@@ -1,4 +1,4 @@
-var CACHE = "hiit-timer-v5";
+var CACHE = "hiit-timer-v6";
 var ASSETS = [
   "./",
   "./index.html",
@@ -11,7 +11,12 @@ var ASSETS = [
 
 self.addEventListener("install", function(e){
   e.waitUntil(
-    caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }).then(function(){
+    caches.open(CACHE).then(function(c){
+      /* {cache:"reload"} bypasses the HTTP cache. Pages serves HTML with
+         max-age=600, so a plain addAll can fill a brand-new cache version
+         with a stale copy and users stay on old code after a deploy. */
+      return c.addAll(ASSETS.map(function(u){ return new Request(u, { cache: "reload" }); }));
+    }).then(function(){
       return self.skipWaiting();
     })
   );

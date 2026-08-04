@@ -97,6 +97,10 @@ var CACHE = "hiit-timer-v2";   // v1 → v2
 
 Skip this and devices keep serving the old cache, so the changes never show up.
 
+The install step fetches with `{cache: "reload"}` on purpose. GitHub Pages serves HTML
+with `max-age=600`, so a plain `addAll()` can populate a brand-new cache version from the
+HTTP cache and ship a stale build even though the cache name changed. Don't remove it.
+
 ```sh
 git add -A
 git commit -m "description"
