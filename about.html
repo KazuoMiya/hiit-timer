@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使い方とFAQ｜HIITタイマー — アプリを入れないインターバルタイマー</title>
+<meta name="description" content="ブラウザで開くだけのHIIT/タバタ用インターバルタイマーの使い方。ホーム画面への追加手順、オフライン利用、設定のURL共有、よくある質問。無料・広告なし・アカウント不要。">
+<link rel="canonical" href="https://timer.nexus-code.studio/about.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HIIT Timer">
+<meta property="og:title" content="使い方とFAQ｜アプリを入れないHIITタイマー">
+<meta property="og:description" content="ブラウザで開くだけ。無料・広告なし・アカウント不要・オフライン対応のインターバルタイマー。使い方とよくある質問。">
+<meta property="og:url" content="https://timer.nexus-code.studio/about.html">
+<meta property="og:image" content="https://timer.nexus-code.studio/og-image.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#101319">
+<script data-goatcounter="https://nexuscode.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"無料のインターバルタイマーは他にもたくさんある。なぜこれを使うのか？","acceptedAnswer":{"@type":"Answer","text":"開くコストがゼロだからです。ストアを開いてダウンロードして通知許可に答える工程が丸ごと無く、アプリには不可能な場所——ジムの壁のテレビ、ホテルの備え付けPC、借りたスマホ——でも動きます。合わなければタブを閉じるだけで、端末には何も残りません。"}},
+{"@type":"Question","name":"どうせ人気が出たら課金するのでは？","acceptedAnswer":{"@type":"Answer","text":"このタイマーはアカウントもメールアドレスも取得していないため、後から囲い込む手段が構造的にありません。ソースコードはMITライセンスで公開されており、いつでも自分のサーバーに置いて使えます。運営は任意の支援のみで行っています。"}},
+{"@type":"Question","name":"画面を消したらタイマーは止まる？","acceptedAnswer":{"@type":"Answer","text":"iOSでは画面が完全に消えると進行が止まります。これはブラウザの制限です。その代わり実行中は3通りの方法で画面スリープを抑制し、万一止まっても画面に戻った瞬間に実際の経過時間へ追いつくため、フェーズがずれることはありません。"}},
+{"@type":"Question","name":"ジムの地下は電波が入らない。ネットが無くても動く？","acceptedAnswer":{"@type":"Answer","text":"一度電波のある場所で開けば、以後は完全にオフラインで動作します。Service Workerがファイル一式（約31KB）を端末に保存するため、二度目以降は通信を一切行いません。"}},
+{"@type":"Question","name":"個人開発のサービスが終了したら使えなくなるのでは？","acceptedAnswer":{"@type":"Answer","text":"止まるサーバーがそもそも存在しません。静的なHTMLファイル1枚が端末内で完結して動いており、端末にキャッシュされたものはそのまま動き続けます。ソースも公開されているため、丸ごと保存して自分の環境に置くこともできます。"}}
+]}
+</script>
+<style>
+:root{
+  --ink:#101319; --ink-2:#1A1E27; --bone:#F2F0EA;
+  --work:#D91F45; --rest:#0B7A6E; --prep:#DFA524; --setrest:#3A4C86;
+  --display:'Oswald','Barlow Condensed',Impact,'Arial Narrow',sans-serif;
+  --util:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --line:#262C38; --grey:#8A93A6; --grey-2:#6C7488;
+}
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--ink);color:var(--bone);font-family:var(--util);line-height:1.9;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px 80px}
+a{color:inherit}
+
+/* ---- hero ---- */
+.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.hero .bar{height:4px;width:64px;background:var(--work);margin-bottom:28px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,8vw,56px);line-height:1.15;letter-spacing:.02em}
+.hero .lead{margin-top:18px;color:var(--grey);font-size:14px}
+.cta-row{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+.btn{
+  display:inline-block;padding:16px 26px;border-radius:2px;text-decoration:none;
+  font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.12em;text-transform:uppercase;
+}
+.btn.primary{background:var(--work);color:#fff}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.ghost{border:1px solid #2E3644;color:var(--bone)}
+.btn.ghost:hover{background:var(--ink-2)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:26px}
+.badges span{font-size:11px;letter-spacing:.08em;color:var(--grey);border:1px solid var(--line);border-radius:2px;padding:5px 10px}
+
+/* ---- sections ---- */
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:#7C859A;text-transform:uppercase;margin-bottom:14px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,5.5vw,34px);letter-spacing:.04em;line-height:1.3;margin-bottom:18px}
+p{font-size:13.5px;color:#C9CEDA}
+p + p{margin-top:14px}
+.note{color:var(--grey);font-size:12.5px}
+
+/* ---- demo ---- */
+.demo-frame{
+  margin:26px auto 0;max-width:390px;border:1px solid #2E3644;border-radius:6px;
+  overflow:hidden;background:var(--ink)
+}
+.demo-frame iframe{display:block;width:100%;height:640px;border:0}
+.demo-cap{text-align:center;font-size:11px;color:var(--grey-2);letter-spacing:.06em;margin-top:10px}
+
+/* ---- feature grid ---- */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+@media(max-width:540px){.grid{grid-template-columns:1fr}}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:2px;padding:16px}
+.card b{display:block;font-family:var(--display);font-size:16px;letter-spacing:.05em;font-weight:600;margin-bottom:6px}
+.card span{font-size:12px;color:var(--grey);line-height:1.8}
+.phase-chips{display:flex;gap:6px;margin:6px 0 2px}
+.phase-chips i{height:8px;flex:1;border-radius:2px}
+
+/* ---- steps ---- */
+.steps{counter-reset:s;margin-top:8px}
+.step{display:flex;gap:16px;padding:16px 0;border-bottom:1px dashed #212734}
+.step:last-child{border-bottom:none}
+.step .n{
+  counter-increment:s;flex:none;width:34px;height:34px;border:1px solid #2E3644;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-weight:600;font-size:16px;color:var(--prep);
+}
+.step .n::before{content:counter(s)}
+.step h3{font-size:14px;letter-spacing:.04em;margin-bottom:4px}
+.step p{font-size:12.5px;color:var(--grey)}
+code{background:var(--ink-2);border:1px solid var(--line);border-radius:2px;padding:2px 7px;font-size:12px;word-break:break-all}
+
+/* ---- honest limits ---- */
+.limits .card{border-left:3px solid var(--prep)}
+.limits .card + .card{margin-top:10px}
+.limits .grid{grid-template-columns:1fr}
+
+/* ---- faq ---- */
+details{border:1px solid var(--line);border-radius:2px;background:var(--ink-2);margin-top:10px}
+summary{
+  cursor:pointer;padding:16px;font-size:13px;letter-spacing:.02em;list-style:none;
+  display:flex;gap:12px;align-items:baseline;
+}
+summary::before{content:"Q";font-family:var(--display);font-weight:600;color:var(--work);flex:none}
+summary::-webkit-details-marker{display:none}
+details p{padding:0 16px 16px 40px;font-size:12.5px;color:var(--grey)}
+details[open] summary{border-bottom:1px dashed #212734}
+
+/* ---- footer ---- */
+footer{padding:44px 0 0;font-size:12px;color:var(--grey-2);letter-spacing:.04em}
+footer a{color:var(--grey)}
+footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="bar"></div>
+    <h1>アプリを入れない、<br>HIITタイマー。</h1>
+    <p class="lead">ジムのテレビでも、ホテルのノートPCでも、借りたスマホでも。<br>同じURLを開くだけ。それで終わりです。</p>
+    <div class="cta-row">
+      <a class="btn primary" href="./">今すぐ使う</a>
+      <a class="btn ghost" href="#howto">使い方を見る</a>
+    </div>
+    <div class="badges">
+      <span>無料</span><span>広告なし</span><span>アカウント不要</span><span>オフライン対応</span><span>日本語 / English</span><span>オープンソース (MIT)</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Demo</div>
+    <h2>説明より、触ったほうが早い</h2>
+    <p>下の画面は動画ではなく、<b>本物のタイマー</b>です。プリセットを選んで、開始を押してみてください。</p>
+    <div class="demo-frame"><iframe src="./?embed=1" title="HIITタイマー（ライブデモ）" loading="lazy"></iframe></div>
+    <p class="demo-cap">気に入ったら <a href="./">フルスクリーンで開く →</a></p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Features</div>
+    <h2>できること</h2>
+    <div class="grid">
+      <div class="card"><b>4つのプリセット</b><span>タバタ 20秒/10秒×8、クラシック 40秒/20秒×10、ボクシング 3分/1分×3R、スプリント 30秒/30秒×6×2</span></div>
+      <div class="card"><b>すべて自由に設定</b><span>準備・運動・休憩・ラウンド数・セット数・セット間休憩。5秒刻みで調整できます</span></div>
+      <div class="card"><b>色で分かる</b>
+        <div class="phase-chips"><i style="background:var(--prep)"></i><i style="background:var(--work)"></i><i style="background:var(--rest)"></i><i style="background:var(--setrest)"></i></div>
+        <span>準備=黄 / 運動=赤 / 休憩=緑 / セット間=青。画面全体が切り替わるので、床に置いても部屋の反対側からでも分かります</span></div>
+      <div class="card"><b>音とバイブで知らせる</b><span>残り3秒のカウントダウンと、フェーズの切り替わりでビープ音。対応端末ではバイブレーションも</span></div>
+      <div class="card"><b>画面が消えない</b><span>実行中はWake Lock APIを含む3通りの方法で画面スリープを抑制します</span></div>
+      <div class="card"><b>オフラインで動く</b><span>一度開けば全ファイル（約31KB）が端末に保存され、以後は電波ゼロでも起動します</span></div>
+      <div class="card"><b>設定をURLで共有</b><span>作ったメニューをリンクにして送れます。受け取った人は開くだけ。登録は不要です</span></div>
+      <div class="card"><b>日英切り替え</b><span>右上のボタンで日本語と英語を切り替え。選択は端末に記憶されます</span></div>
+    </div>
+  </section>
+
+  <section id="howto">
+    <div class="eyebrow">How to use</div>
+    <h2>使い方</h2>
+    <div class="steps">
+      <div class="step"><span class="n"></span><div><h3>開く</h3><p><code>timer.nexus-code.studio</code> をブラウザで開きます。インストールも登録もありません。</p></div></div>
+      <div class="step"><span class="n"></span><div><h3>選ぶ・整える</h3><p>プリセットをタップするか、各項目の −/＋ で自分のメニューに調整します。上部に合計時間が表示されます。</p></div></div>
+      <div class="step"><span class="n"></span><div><h3>開始する</h3><p>実行中は、画面のどこをタップしても一時停止。スペースキーでも同じです。スキップと終了はいつでも押せます。</p></div></div>
+    </div>
+
+    <h2 style="margin-top:44px">ホーム画面に追加する（推奨）</h2>
+    <p>アイコンから全画面で立ち上がり、見た目も挙動もアプリと変わらなくなります。</p>
+    <div class="steps">
+      <div class="step"><span class="n"></span><div><h3>iPhone / iPad</h3><p><b>Safari</b> で開く → 共有ボタン → 「ホーム画面に追加」→ 追加。（Chromeからは追加できません）</p></div></div>
+      <div class="step"><span class="n"></span><div><h3>Android</h3><p><b>Chrome</b> で開く → メニュー（⋮）→ 「ホーム画面に追加」または「アプリをインストール」。</p></div></div>
+    </div>
+
+    <h2 style="margin-top:44px">メニューを人に送る</h2>
+    <p>開始ボタンの下の「<b>設定をリンクで共有</b>」を押すと、いまの設定がそのまま入ったURLがコピーされます。</p>
+    <p class="note">例: <code>timer.nexus-code.studio/?w=45&amp;r=15&amp;rd=10</code> → 運動45秒 / 休憩15秒 × 10ラウンドが設定済みの状態で開きます。トレーナーからメンバーへ、その日のメニューを送るような使い方ができます。</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">At the gym</div>
+    <h2>ジムで使う</h2>
+    <p><b>地下でも動きます。</b>一度電波のある場所で開いておけば、以後の通信はゼロ。ロッカールームや地下フロアの電波状況は関係ありません。</p>
+    <p><b>壁のテレビでも動きます。</b>ブラウザ付きのスマートTVやPC接続のモニターでURLを開けば、そのまま全員から見えるクラス用の時計になります。専用機材は要りません。</p>
+  </section>
+
+  <section class="limits">
+    <div class="eyebrow">Honest limits</div>
+    <h2>できないことも、先に書いておきます</h2>
+    <div class="grid">
+      <div class="card"><b>iOSは画面が消えると止まる</b><span>ブラウザの制限で、こちらでは直せません。その代わり実行中はスリープを抑制し、万一止まっても画面に戻った瞬間に実際の経過時間まで追いつくので、フェーズはずれません。それでも画面が消える場合は、設定 → 画面表示と明るさ → 自動ロック → なし。</span></div>
+      <div class="card"><b>音楽の音量が下がることがある</b><span>音楽アプリと同時に使うと、再生音量が下がる場合があります。現在調査中です。直り次第、このページでお知らせします。</span></div>
+      <div class="card"><b>記録は残りません</b><span>何も保存しない設計のため、ワークアウト履歴の機能はありません。</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why free</div>
+    <h2>4分を数えるのに、月額はいりません</h2>
+    <p>インターバルタイマーのアプリには、無料で数回使うと課金画面が出るものが少なくありません。このタイマーはその逆を行きます。<b>アカウントもメールアドレスも取得しない</b>ので、あとから囲い込む手段が構造的に存在しません。</p>
+    <p>ソースコードは<a href="https://github.com/KazuoMiya/hiit-timer" rel="noopener" target="_blank">GitHubで公開</a>しています（MITライセンス）。仮に明日この配信が止まっても、端末にキャッシュされたタイマーは動き続けますし、丸ごと保存して自分のサーバーに置くこともできます。</p>
+    <p>ひとりで開発しています。気に入ったら、<a href="https://ko-fi.com/kazmiya" rel="noopener" target="_blank">コーヒー1杯分の応援</a>が続ける励みになります。</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">FAQ</div>
+    <h2>よくある質問</h2>
+    <details>
+      <summary>無料のタイマーは他にもたくさんある。なぜこれ？</summary>
+      <p>開くコストがゼロだからです。ストアを開いて、レビューを読んで、ダウンロードして、通知の許可に答えて——という工程が丸ごとありません。そしてアプリには不可能な場所で動きます。ジムの壁のテレビ、ホテルの備え付けPC、借りたスマホ。合わなければタブを閉じるだけで、端末には何も残りません。</p>
+    </details>
+    <details>
+      <summary>どうせ人気が出たら課金するのでは？</summary>
+      <p>警戒するのは正しいです。このカテゴリで最も多い低評価レビューがまさにそれなので。ただ、このタイマーはアカウントもメールも取っていないため、後から人質に取れるものが何もありません。ソースは公開済みで、いつでも持ち出せます。運営は任意の支援のみです。</p>
+    </details>
+    <details>
+      <summary>画面を消したら止まる？</summary>
+      <p>iOSでは止まります。隠しません。ブラウザ側の制限です。その代わり実行中は3通りの方法で画面スリープを抑制していて、通常の使用で画面は消えません。万一止まっても、画面に戻った瞬間に実際の経過時間へ追いつくため「3ラウンドずれていた」は起きません。</p>
+    </details>
+    <details>
+      <summary>電波のないジムでも使える？</summary>
+      <p>使えます。一度電波のある場所で開けば、全ファイルが端末に保存され、以後は通信を一切しません。ホーム画面に追加しておけば、圏外でもアイコンから普通に起動します。</p>
+    </details>
+    <details>
+      <summary>個人開発でしょう。終了したら困る。</summary>
+      <p>止められるサーバーがそもそもありません。HTMLファイル1枚が端末の中で完結して動いています。キャッシュされたものは配信が止まっても動き続け、ソースはMITライセンスで公開されているので、ZIPで保存して自分の環境に置くこともできます。</p>
+    </details>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="./">タイマーを開く</a>
+      <a href="https://github.com/KazuoMiya/hiit-timer" rel="noopener" target="_blank">GitHub</a>
+      <a href="https://ko-fi.com/kazmiya" rel="noopener" target="_blank">開発を支援する ☕</a>
+    </div>
+    <div>HIIT Timer — NexusCode Studio</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -128,6 +128,8 @@ body{
 }
 #share:hover{color:var(--bone)}
 .hint{font-size:11px;color:#6C7488;letter-spacing:.05em;text-align:center;line-height:1.7}
+.hint a{color:#7C859A;text-underline-offset:3px}
+.hint a:hover{color:var(--bone)}
 
 #support{
   display:flex;align-items:center;justify-content:center;gap:11px;
@@ -228,6 +230,7 @@ html[lang="ja"] #phase{margin-bottom:.6vh}
     <button id="share" type="button"></button>
     <p class="hint"><span id="hint1"></span><br><span id="hint2"></span><br><span id="awakeNote"></span></p>
     <a id="support" target="_blank" rel="noopener" hidden><span class="cup">☕</span><span id="supportText"></span></a>
+    <p class="hint"><a id="guideLink" href="about.html"></a> · <a href="https://github.com/KazuoMiya/hiit-timer" target="_blank" rel="noopener">GitHub</a></p>
   </section>
 
   <section id="run" data-phase="prep">
@@ -283,6 +286,7 @@ var I18N = {
     awakeNo:"The screen is kept awake while the timer runs (if it still sleeps, turn off auto-lock)",
     share:"Share these settings as a link", copied:"Link copied",
     supportMsg:"Free, ad-free, built by one person.\nA coffee's worth of support helps.",
+    guide:"How to use & FAQ",
     docTitle:"HIIT Timer — free interval & Tabata timer, no install",
     dec:"Decrease", inc:"Increase",
     unitSec:"s", unitSet:"set", unitRound:"R",
@@ -303,6 +307,7 @@ var I18N = {
     awakeNo:"実行中は画面スリープを抑制します(効かない場合は端末の自動ロックをオフに)",
     share:"設定をリンクで共有", copied:"リンクをコピーしました",
     supportMsg:"無料・広告なしで、ひとりで開発しています。\nコーヒー1杯分の応援が、続ける励みになります",
+    guide:"使い方とよくある質問",
     docTitle:"HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）",
     dec:"減らす", inc:"増やす",
     unitSec:"秒", unitSet:"set", unitRound:"R",
@@ -722,6 +727,7 @@ function applyLang(){
   document.title = d.docTitle;
   el("share").textContent = d.share;
   el("supportText").textContent = d.supportMsg;
+  el("guideLink").textContent = d.guide;
   el("totalLabel").textContent = d.total;
   el("ebPresets").textContent = d.presets;
   el("ebSettings").textContent = d.settings;
