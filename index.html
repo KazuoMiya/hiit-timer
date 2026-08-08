@@ -129,6 +129,17 @@ body{
 #share:hover{color:var(--bone)}
 .hint{font-size:11px;color:#6C7488;letter-spacing:.05em;text-align:center;line-height:1.7}
 
+#support{
+  display:flex;align-items:center;justify-content:center;gap:11px;
+  background:var(--ink-2);border:1px solid #262C38;border-radius:2px;
+  padding:14px 16px;text-decoration:none;
+  color:#8A93A6;font-family:var(--util);font-size:12px;letter-spacing:.02em;line-height:1.75;
+  transition:border-color .15s,color .15s;
+}
+#support:hover{border-color:#4A5468;color:var(--bone)}
+#support .cup{font-size:17px;flex:none}
+#supportText{white-space:pre-line}
+
 /* ---------- RUN ---------- */
 #run{
   position:absolute;inset:0;display:none;
@@ -216,6 +227,7 @@ html[lang="ja"] #phase{margin-bottom:.6vh}
     <button id="start">Start</button>
     <button id="share" type="button"></button>
     <p class="hint"><span id="hint1"></span><br><span id="hint2"></span><br><span id="awakeNote"></span></p>
+    <a id="support" target="_blank" rel="noopener" hidden><span class="cup">☕</span><span id="supportText"></span></a>
   </section>
 
   <section id="run" data-phase="prep">
@@ -270,6 +282,7 @@ var I18N = {
     awake:"The screen is kept awake while the timer runs",
     awakeNo:"The screen is kept awake while the timer runs (if it still sleeps, turn off auto-lock)",
     share:"Share these settings as a link", copied:"Link copied",
+    supportMsg:"Free, ad-free, built by one person.\nA coffee's worth of support helps.",
     docTitle:"HIIT Timer — free interval & Tabata timer, no install",
     dec:"Decrease", inc:"Increase",
     unitSec:"s", unitSet:"set", unitRound:"R",
@@ -289,6 +302,7 @@ var I18N = {
     awake:"実行中は画面スリープを抑制します",
     awakeNo:"実行中は画面スリープを抑制します(効かない場合は端末の自動ロックをオフに)",
     share:"設定をリンクで共有", copied:"リンクをコピーしました",
+    supportMsg:"無料・広告なしで、ひとりで開発しています。\nコーヒー1杯分の応援が、続ける励みになります",
     docTitle:"HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）",
     dec:"減らす", inc:"増やす",
     unitSec:"秒", unitSet:"set", unitRound:"R",
@@ -693,12 +707,21 @@ function shareSettings(){
 }
 el("share").addEventListener("click", shareSettings);
 
+/* ---------- support link (hidden until a URL is set) ---------- */
+var SUPPORT_URL = "";   /* e.g. "https://ko-fi.com/xxxx" — empty keeps the card hidden */
+if (SUPPORT_URL){
+  el("support").href = SUPPORT_URL;
+  el("support").hidden = false;
+  el("support").addEventListener("click", function(){ track("support-click"); });
+}
+
 /* ---------- language ---------- */
 function applyLang(){
   var d = t();
   document.documentElement.lang = LANG;
   document.title = d.docTitle;
   el("share").textContent = d.share;
+  el("supportText").textContent = d.supportMsg;
   el("totalLabel").textContent = d.total;
   el("ebPresets").textContent = d.presets;
   el("ebSettings").textContent = d.settings;
