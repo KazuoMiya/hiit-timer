@@ -113,7 +113,7 @@ To wrap it with Capacitor:
 
 ```sh
 npm install -D @capacitor/cli
-npx cap init "HIIT Timer" com.nexuscode.hiit --web-dir=.
+npx cap init "HIIT Timer" com.kazmiya.hiit --web-dir=.
 npx cap add ios
 npx cap open ios
 ```
