@@ -1,4 +1,4 @@
-var CACHE = "hiit-timer-v12";
+var CACHE = "hiit-timer-v13";
 var ASSETS = [
   "./",
   "./index.html",
