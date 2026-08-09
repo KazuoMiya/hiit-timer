@@ -25,10 +25,10 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"無料のインターバルタイマーは他にもたくさんある。なぜこれを使うのか？","acceptedAnswer":{"@type":"Answer","text":"開くコストがゼロだからです。ストアを開いてダウンロードして通知許可に答える工程が丸ごと無く、アプリには不可能な場所——ジムの壁のテレビ、ホテルの備え付けPC、借りたスマホ——でも動きます。合わなければタブを閉じるだけで、端末には何も残りません。"}},
-{"@type":"Question","name":"どうせ人気が出たら課金するのでは？","acceptedAnswer":{"@type":"Answer","text":"このタイマーはアカウントもメールアドレスも取得していないため、後から囲い込む手段が構造的にありません。ソースコードはMITライセンスで公開されており、いつでも自分のサーバーに置いて使えます。運営は任意の支援のみで行っています。"}},
+{"@type":"Question","name":"どうせ人気が出たら課金するのでは？","acceptedAnswer":{"@type":"Answer","text":"このタイマーはアカウントもメールアドレスも取得していないため、後から囲い込む手段が構造的にありません。運営は任意の支援のみで行っています。"}},
 {"@type":"Question","name":"画面を消したらタイマーは止まる？","acceptedAnswer":{"@type":"Answer","text":"iOSでは画面が完全に消えると進行が止まります。これはブラウザの制限です。その代わり実行中は3通りの方法で画面スリープを抑制し、万一止まっても画面に戻った瞬間に実際の経過時間へ追いつくため、フェーズがずれることはありません。"}},
 {"@type":"Question","name":"ジムの地下は電波が入らない。ネットが無くても動く？","acceptedAnswer":{"@type":"Answer","text":"一度電波のある場所で開けば、以後は完全にオフラインで動作します。Service Workerがファイル一式（約31KB）を端末に保存するため、二度目以降は通信を一切行いません。"}},
-{"@type":"Question","name":"個人開発のサービスが終了したら使えなくなるのでは？","acceptedAnswer":{"@type":"Answer","text":"止まるサーバーがそもそも存在しません。静的なHTMLファイル1枚が端末内で完結して動いており、端末にキャッシュされたものはそのまま動き続けます。ソースも公開されているため、丸ごと保存して自分の環境に置くこともできます。"}}
+{"@type":"Question","name":"個人開発のサービスが終了したら使えなくなるのでは？","acceptedAnswer":{"@type":"Answer","text":"止まるサーバーがそもそも存在しません。小さなファイル1式が端末内で完結して動いており、一度端末に保存されたものは配信が止まってもそのまま動き続けます。"}}
 ]}
 </script>
 <style>
@@ -135,7 +135,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
       <a class="btn ghost" href="#howto">使い方を見る</a>
     </div>
     <div class="badges">
-      <span>無料</span><span>広告なし</span><span>アカウント不要</span><span>オフライン対応</span><span>日本語 / English</span><span>オープンソース (MIT)</span>
+      <span>無料</span><span>広告なし</span><span>アカウント不要</span><span>オフライン対応</span><span>日本語 / English</span>
     </div>
   </div>
 
@@ -206,7 +206,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <div class="eyebrow">Why free</div>
     <h2>4分を数えるのに、月額はいりません</h2>
     <p>インターバルタイマーのアプリには、無料で数回使うと課金画面が出るものが少なくありません。このタイマーはその逆を行きます。<b>アカウントもメールアドレスも取得しない</b>ので、あとから囲い込む手段が構造的に存在しません。</p>
-    <p>ソースコードは<a href="https://github.com/KazuoMiya/hiit-timer" rel="noopener" target="_blank">GitHubで公開</a>しています（MITライセンス）。仮に明日この配信が止まっても、端末にキャッシュされたタイマーは動き続けますし、丸ごと保存して自分のサーバーに置くこともできます。</p>
+    <p>仕組みもシンプルです。小さなファイル1式があなたの端末の中で完結して動いているだけなので、仮に明日この配信が止まっても、端末に保存されたタイマーはそのまま動き続けます。</p>
     <p>ひとりで開発しています。気に入ったら、<a href="https://ko-fi.com/kazmiya" rel="noopener" target="_blank">コーヒー1杯分の応援</a>が続ける励みになります。</p>
   </section>
 
@@ -219,7 +219,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>どうせ人気が出たら課金するのでは？</summary>
-      <p>警戒するのは正しいです。このカテゴリで最も多い低評価レビューがまさにそれなので。ただ、このタイマーはアカウントもメールも取っていないため、後から人質に取れるものが何もありません。ソースは公開済みで、いつでも持ち出せます。運営は任意の支援のみです。</p>
+      <p>警戒するのは正しいです。このカテゴリで最も多い低評価レビューがまさにそれなので。ただ、このタイマーはアカウントもメールも取っていないため、後から人質に取れるものが何もありません。運営は任意の支援のみです。</p>
     </details>
     <details>
       <summary>画面を消したら止まる？</summary>
@@ -231,7 +231,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>個人開発でしょう。終了したら困る。</summary>
-      <p>止められるサーバーがそもそもありません。HTMLファイル1枚が端末の中で完結して動いています。キャッシュされたものは配信が止まっても動き続け、ソースはMITライセンスで公開されているので、ZIPで保存して自分の環境に置くこともできます。</p>
+      <p>止められるサーバーがそもそもありません。小さなファイル1式が端末の中で完結して動いています。一度開いて端末に保存されたものは、配信が止まってもそのまま動き続けます。</p>
     </details>
   </section>
 

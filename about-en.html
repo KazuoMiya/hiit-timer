@@ -25,10 +25,10 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"There are hundreds of free interval timers. Why this one?","acceptedAnswer":{"@type":"Answer","text":"Because opening it costs nothing. There is no store page, no download, no notification prompt — and it works in places an app never can: the TV on a gym wall, a hotel laptop, a borrowed phone. If it's not for you, close the tab and nothing is left on your device."}},
-{"@type":"Question","name":"You'll paywall it once it gets popular, right?","acceptedAnswer":{"@type":"Answer","text":"This timer collects no account and no email address, so there is structurally nothing to hold hostage later. The source code is published under the MIT license, and you can host it yourself at any time. Development is funded by optional tips only."}},
+{"@type":"Question","name":"You'll paywall it once it gets popular, right?","acceptedAnswer":{"@type":"Answer","text":"This timer collects no account and no email address, so there is structurally nothing to hold hostage later. Development is funded by optional tips only."}},
 {"@type":"Question","name":"Does the timer stop when the screen turns off?","acceptedAnswer":{"@type":"Answer","text":"On iOS, yes — that is a browser limitation. In return, the timer suppresses screen sleep three different ways while running, and if it ever does stop, it catches up to real elapsed time the moment you return, so phases never drift."}},
 {"@type":"Question","name":"My gym's basement has no signal. Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Open it once with a connection and a service worker stores the whole thing (about 31KB) on your device. After that it makes no network requests at all."}},
-{"@type":"Question","name":"It's one person's side project. What if it shuts down?","acceptedAnswer":{"@type":"Answer","text":"There is no server to shut down. A single static HTML file runs entirely on your device, the cached copy keeps working even if hosting disappears, and the published source means you can save it and run it anywhere."}}
+{"@type":"Question","name":"It's one person's side project. What if it shuts down?","acceptedAnswer":{"@type":"Answer","text":"There is no server to shut down. A small set of files runs entirely on your device, and once it's stored there, it keeps working whether or not this site does."}}
 ]}
 </script>
 <style>
@@ -126,7 +126,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
       <a class="btn ghost" href="#howto">How it works</a>
     </div>
     <div class="badges">
-      <span>Free</span><span>No ads</span><span>No account</span><span>Works offline</span><span>English / 日本語</span><span>Open source (MIT)</span>
+      <span>Free</span><span>No ads</span><span>No account</span><span>Works offline</span><span>English / 日本語</span>
     </div>
   </div>
 
@@ -197,7 +197,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <div class="eyebrow">Why free</div>
     <h2>Counting to four minutes shouldn't cost a subscription</h2>
     <p>Plenty of interval timer apps let you run a few workouts and then show a paywall. This one is built the opposite way: it collects <b>no account and no email</b>, so there is structurally nothing to hold hostage later.</p>
-    <p>The source code is <a href="https://github.com/KazuoMiya/hiit-timer" rel="noopener" target="_blank">public on GitHub</a> (MIT license). If this site vanished tomorrow, the copy cached on your device would keep working — and you could host your own.</p>
+    <p>The mechanics are just as simple. A small set of files runs entirely on your device, so if this site vanished tomorrow, the copy stored on your device would keep working.</p>
     <p>It's built by one person. If you like it, <a href="https://ko-fi.com/kazmiya" rel="noopener" target="_blank">a coffee's worth of support</a> keeps it going.</p>
   </section>
 
@@ -210,7 +210,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>You'll paywall it once it gets popular, right?</summary>
-      <p>Fair suspicion — that's the most common one-star review in this category. But this timer takes no account and no email, so there's nothing to hold hostage later. The source is published and portable. Development runs on optional tips only.</p>
+      <p>Fair suspicion — that's the most common one-star review in this category. But this timer takes no account and no email, so there's nothing to hold hostage later. Development runs on optional tips only.</p>
     </details>
     <details>
       <summary>Does it stop when the screen turns off?</summary>
@@ -222,7 +222,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>It's one person's side project. What if it shuts down?</summary>
-      <p>There's no server to shut down. It's one static HTML file running entirely on your device. The cached copy keeps working regardless, and the MIT-licensed source means you can save the whole thing and run it anywhere.</p>
+      <p>There's no server to shut down. A small set of files runs entirely on your device, and once it's stored there, it keeps working whether or not this site does.</p>
     </details>
   </section>
 
