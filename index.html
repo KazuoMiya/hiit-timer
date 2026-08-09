@@ -728,6 +728,7 @@ function applyLang(){
   el("share").textContent = d.share;
   el("supportText").textContent = d.supportMsg;
   el("guideLink").textContent = d.guide;
+  el("guideLink").href = LANG === "ja" ? "about.html" : "about-en.html";
   el("totalLabel").textContent = d.total;
   el("ebPresets").textContent = d.presets;
   el("ebSettings").textContent = d.settings;
