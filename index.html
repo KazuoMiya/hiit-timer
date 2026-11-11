@@ -28,8 +28,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
+<!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
+     Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
 <script data-goatcounter="https://nexuscode.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+        async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous"
+        integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -102,17 +105,30 @@ body{
 .row:first-child{border-top:1px solid #212734}
 .row .lab{font-size:13px;letter-spacing:.06em;color:#C9CEDA}
 .stepper{display:flex;align-items:center;gap:4px}
-.stepper button{
+.stepper .pm{
   width:40px;height:40px;border:1px solid #2E3644;background:transparent;color:var(--bone);
   font-size:20px;line-height:1;border-radius:2px;cursor:pointer;font-family:var(--util);
 }
-.stepper button:hover{background:#1E242F}
-.stepper button:active{background:#2A3140}
+.stepper .pm:hover{background:#1E242F}
+.stepper .pm:active{background:#2A3140}
 .stepper .val{
   font-family:var(--display);font-weight:600;font-size:26px;min-width:74px;text-align:center;
   font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  /* tappable: opens the direct-entry editor. The dashed rule is the only affordance. */
+  background:none;border:none;border-bottom:1px dashed #3A4354;border-radius:0;
+  color:inherit;cursor:text;padding:0 2px 1px;line-height:1.25;
 }
-.stepper .val u{text-decoration:none;font-size:12px;color:#7C859A;margin-left:2px;font-family:var(--util)}
+.stepper .val:hover,.stepper .val:focus-visible{border-bottom-color:var(--prep);outline:none}
+.stepper .val u,.edit u{text-decoration:none;font-size:12px;color:#7C859A;margin-left:2px;font-family:var(--util);font-weight:400}
+
+.edit{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-width:74px}
+.edit input{
+  width:40px;height:40px;padding:0;text-align:center;
+  background:#0B0E13;border:1px solid var(--prep);border-radius:2px;outline:none;
+  color:var(--bone);caret-color:var(--prep);
+  font-family:var(--display);font-weight:600;font-size:24px;font-variant-numeric:tabular-nums;
+}
+.edit i{font-style:normal;font-family:var(--display);font-weight:600;font-size:22px;color:#7C859A}
 
 #start{
   margin-top:2px;width:100%;border:none;border-radius:2px;cursor:pointer;
@@ -176,6 +192,8 @@ html[lang="ja"] #phase{margin-bottom:.6vh}
   font-size:min(42vw,30vh);line-height:.86;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em;
 }
+/* phases of 10:00 or more show five characters; at full size they span the whole viewport */
+#clock.long{font-size:min(33vw,30vh)}
 #nextup{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-top:2vh;min-height:1em}
 #run.paused .stage{opacity:.42}
 
@@ -267,13 +285,14 @@ var PRESETS = [
   { s:{prep:15,work:30, rest:30,rounds:6, sets:2,setRest:90} }
 ];
 
+/* min/max bound every way a value can arrive: steppers, typed entry, shared-link params */
 var FIELDS = [
-  { key:"prep",    step:5, min:0, max:120, time:true },
-  { key:"work",    step:5, min:5, max:600, time:true },
-  { key:"rest",    step:5, min:0, max:600, time:true },
-  { key:"rounds",  step:1, min:1, max:30,  time:false },
-  { key:"sets",    step:1, min:1, max:10,  time:false },
-  { key:"setRest", step:15,min:0, max:600, time:true }
+  { key:"prep",    step:5, min:0, max:600,  time:true },
+  { key:"work",    step:5, min:5, max:3600, time:true },
+  { key:"rest",    step:5, min:0, max:3600, time:true },
+  { key:"rounds",  step:1, min:1, max:30,   time:false },
+  { key:"sets",    step:1, min:1, max:10,   time:false },
+  { key:"setRest", step:15,min:0, max:3600, time:true }
 ];
 
 /* ---------- i18n ---------- */
@@ -289,6 +308,7 @@ var I18N = {
     guide:"How to use & FAQ",
     docTitle:"HIIT Timer — free interval & Tabata timer, no install",
     dec:"Decrease", inc:"Increase",
+    edit:"Tap to type a value", unitMin:"minutes", unitSecLong:"seconds",
     unitSec:"s", unitSet:"set", unitRound:"R",
     stop:"Stop", skip:"Skip", pause:"Pause", resume:"Resume", again:"Again",
     left:"LEFT", next:"NEXT: ", finalRound:"FINAL ROUND", getReady:"GET READY",
@@ -310,6 +330,7 @@ var I18N = {
     guide:"使い方とよくある質問",
     docTitle:"HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）",
     dec:"減らす", inc:"増やす",
+    edit:"タップして直接入力", unitMin:"分", unitSecLong:"秒",
     unitSec:"秒", unitSet:"set", unitRound:"R",
     stop:"終了", skip:"スキップ", pause:"一時停止", resume:"再開", again:"もう一度",
     left:"残り", next:"次: ", finalRound:"ラストラウンド", getReady:"スタート前",
@@ -337,6 +358,27 @@ function fmt(sec){
 function fmtShort(sec){
   return sec >= 60 ? fmt(sec) : String(sec);
 }
+/* totals can pass an hour now that phases go up to 60:00; the big clock never does */
+function fmtLong(sec){
+  sec = Math.max(0, Math.ceil(sec));
+  if (sec < 3600) return fmt(sec);
+  var m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return Math.floor(sec / 3600) + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+}
+function clamp(v, f){
+  return Math.min(f.max, Math.max(f.min, v));
+}
+/* ASCII digits only; full-width ones (０-９, what a Japanese IME types) are converted first */
+function digits(str){
+  return String(str)
+    .replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+    .replace(/\D/g, "");
+}
+/* write text only when it changed — paint() runs every frame */
+var shown = {};
+function put(id, txt){
+  if (shown[id] !== txt){ el(id).textContent = txt; shown[id] = txt; }
+}
 
 /* ---------- schedule ---------- */
 function buildPhases(){
@@ -356,19 +398,31 @@ function totalSeconds(){
 }
 
 /* ---------- setup UI ---------- */
+function mk(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function unitOf(f, v){
+  if (f.time) return v >= 60 ? "" : t().unitSec;
+  return f.key === "sets" ? t().unitSet : t().unitRound;
+}
+
 function renderSetup(){
+  closeEditor(true);
+
   var ps = el("presets");
-  ps.innerHTML = "";
+  ps.textContent = "";
   PRESETS.forEach(function(p, i){
-    var b = document.createElement("button");
-    b.className = "preset";
+    var b = mk("button", "preset");
     b.type = "button";
     b.setAttribute("aria-pressed", "false");
     b.dataset.i = i;
-    b.innerHTML = '<span class="pn"></span><span class="pd"></span>';
-    b.querySelector(".pn").textContent = t().presetName[i];
-    b.querySelector(".pd").textContent = t().presetDesc[i];
+    b.appendChild(mk("span", "pn", t().presetName[i]));
+    b.appendChild(mk("span", "pd", t().presetDesc[i]));
     b.addEventListener("click", function(){
+      closeEditor(false);
       for (var k in p.s) S[k] = p.s[k];
       syncSetup();
     });
@@ -376,49 +430,167 @@ function renderSetup(){
   });
 
   var rows = el("rows");
-  rows.innerHTML = "";
+  rows.textContent = "";
   FIELDS.forEach(function(f){
-    var row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML =
-      '<span class="lab"></span>' +
-      '<span class="stepper">' +
-        '<button type="button" data-d="-1" aria-label="' + t().dec + '">−</button>' +
-        '<span class="val"></span>' +
-        '<button type="button" data-d="1" aria-label="' + t().inc + '">+</button>' +
-      '</span>';
-    row.querySelector(".lab").textContent = t().fields[f.key];
+    var row = mk("div", "row");
     row.dataset.key = f.key;
-    row.querySelectorAll("button").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var d = parseInt(btn.dataset.d, 10) * f.step;
-        S[f.key] = Math.min(f.max, Math.max(f.min, S[f.key] + d));
-        syncSetup();
-      });
-    });
+    var st = mk("span", "stepper");
+    st.appendChild(stepButton(f, -1));
+    st.appendChild(valButton(f));
+    st.appendChild(stepButton(f, 1));
+    row.appendChild(mk("span", "lab", t().fields[f.key]));
+    row.appendChild(st);
     rows.appendChild(row);
   });
   syncSetup();
 }
 
+function stepButton(f, dir){
+  var b = mk("button", "pm", dir < 0 ? "−" : "+");
+  b.type = "button";
+  b.setAttribute("aria-label", t().fields[f.key] + ": " + (dir < 0 ? t().dec : t().inc));
+  b.addEventListener("click", function(){
+    closeEditor(true);
+    S[f.key] = clamp(S[f.key] + dir * f.step, f);
+    syncSetup();
+  });
+  return b;
+}
+
+function valButton(f){
+  var b = mk("button", "val");
+  b.type = "button";
+  b.title = t().edit;
+  b.setAttribute("aria-label", t().fields[f.key] + ": " + t().edit);
+  b.addEventListener("click", function(){ openEditor(f, b); });
+  return b;
+}
+
 function syncSetup(){
   FIELDS.forEach(function(f){
-    var row = document.querySelector('.row[data-key="' + f.key + '"]');
+    /* no .val while that row is being edited */
+    var node = document.querySelector('.row[data-key="' + f.key + '"] .val');
+    if (!node) return;
     var v = S[f.key];
-    row.querySelector(".val").innerHTML = f.time
-      ? fmtShort(v) + '<u>' + (v>=60 ? "" : t().unitSec) + '</u>'
-      : v + '<u>' + (f.key === "sets" ? t().unitSet : t().unitRound) + '</u>';
+    node.textContent = f.time ? fmtShort(v) : String(v);
+    node.appendChild(mk("u", "", unitOf(f, v)));
   });
   document.querySelectorAll(".preset").forEach(function(b){
     var p = PRESETS[+b.dataset.i].s, same = true;
     for (var k in p) if (p[k] !== S[k]) same = false;
     b.setAttribute("aria-pressed", same ? "true" : "false");
   });
-  el("totalTime").textContent = fmt(totalSeconds());
+  el("totalTime").textContent = fmtLong(totalSeconds());
 }
 
-/* ---------- audio ---------- */
+/* ---------- direct entry: tap a value to type it ----------
+   Time fields get separate minute / second boxes because the numeric keypad
+   on phones has no ":" key. Everything typed is reduced to digits, parsed to an
+   integer and clamped to the field's range before it reaches S. */
+var editing = null;
+
+function openEditor(f, valBtn){
+  closeEditor(true);
+  var v = S[f.key], box = mk("span", "edit"), inputs = [];
+
+  function numberBox(label, value){
+    var i = mk("input");
+    i.type = "text";
+    i.setAttribute("inputmode", "numeric");
+    i.setAttribute("pattern", "[0-9]*");
+    i.setAttribute("autocomplete", "off");
+    i.setAttribute("aria-label", t().fields[f.key] + " (" + label + ")");
+    i.value = value;
+    /* Typing must always land, whether or not the old value happens to be selected.
+       Select-all on focus is not reliable for that: a tap on already-selected text
+       collapses the selection after the click event. So the rule is explicit — typing
+       into a full box with nothing selected starts the box over. */
+    function all(){ try{ i.setSelectionRange(0, i.value.length); }catch(e){ i.select(); } }
+    function tidy(){
+      var clean = digits(i.value).slice(-2);   /* at most two digits; a longer paste keeps its tail */
+      if (clean !== i.value) i.value = clean;
+      /* two digits of minutes typed: move on to seconds */
+      if (clean.length === 2 && i === inputs[0] && inputs[1]) inputs[1].focus();
+    }
+    i.addEventListener("focus", all);
+    i.addEventListener("beforeinput", function(e){
+      if (e.inputType === "insertText" && e.data && i.value.length >= 2 && i.selectionStart === i.selectionEnd) i.value = "";
+    });
+    /* never rewrite the field in the middle of an IME composition; tidy once it ends */
+    i.addEventListener("input", function(e){ if (!e.isComposing) tidy(); });
+    i.addEventListener("compositionend", tidy);
+    inputs.push(i);
+    box.appendChild(i);
+  }
+
+  if (f.time){
+    var sec = v % 60;
+    numberBox(t().unitMin, String(Math.floor(v / 60)));
+    box.appendChild(mk("i", "", ":"));
+    numberBox(t().unitSecLong, (sec < 10 ? "0" : "") + sec);
+  } else {
+    numberBox(t().fields[f.key], String(v));
+    box.appendChild(mk("u", "", unitOf(f, v)));
+  }
+
+  var me = { f: f, box: box, inputs: inputs };
+  box.addEventListener("keydown", function(e){
+    if (e.isComposing || e.keyCode === 229) return;   /* Enter here confirms the IME, not the field */
+    if (e.key === "Enter"){ e.preventDefault(); closeEditor(true, true); }
+    else if (e.key === "Escape"){ e.preventDefault(); closeEditor(false, true); }
+  });
+  /* a tap on the ":" or the gap must not steal focus (that would commit and close) */
+  box.addEventListener("mousedown", function(e){
+    if (e.target.tagName !== "INPUT") e.preventDefault();
+  });
+  /* tapping anywhere else commits; checked after the event so moving between the two boxes doesn't */
+  box.addEventListener("focusout", function(){
+    setTimeout(function(){
+      if (editing === me && !box.contains(document.activeElement)) closeEditor(true);
+    }, 0);
+  });
+
+  valBtn.parentNode.replaceChild(box, valBtn);
+  editing = me;
+  inputs[f.time && v < 60 ? 1 : 0].focus();
+}
+
+function closeEditor(commit, refocus){
+  var ed = editing;
+  if (!ed) return;
+  editing = null;
+  if (commit){
+    var n = ed.inputs.map(function(i){ return parseInt(digits(i.value).slice(-2), 10) || 0; });
+    S[ed.f.key] = clamp(ed.f.time ? n[0] * 60 + n[1] : n[0], ed.f);
+  }
+  var b = valButton(ed.f);
+  if (ed.box.parentNode) ed.box.parentNode.replaceChild(b, ed.box);
+  syncSetup();
+  if (refocus) b.focus();
+}
+
+/* ---------- audio ----------
+   Each workout gets a fresh AudioContext, created inside the tap that starts it
+   (the most dependable way to get sound on iOS). The previous one is closed first:
+   they used to pile up, one per workout, all left running. */
 var ac = null;
+function quiet(p){ if (p && p.catch) p.catch(function(){}); }
+function dropAudio(){
+  var old = ac;
+  ac = null;
+  if (old){ try{ quiet(old.close()); }catch(e){} }
+}
+function wakeAudio(){
+  dropAudio();
+  try{
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state !== "running") quiet(ac.resume());
+  }catch(e){ ac = null; }
+}
+/* release the audio hardware once nothing more will sound */
+function restAudio(delayMs){
+  setTimeout(function(){ if (!T.active) dropAudio(); }, delayMs);
+}
 function beep(freq, dur, vol){
   if (!ac) return;
   try{
@@ -494,7 +666,8 @@ document.addEventListener("visibilitychange", function(){
   if (document.visibilityState === "visible" && T.active && !T.paused){
     lock = null;
     keepAwake(true);
-    if (ac && ac.state === "suspended") ac.resume();
+    /* "interrupted" is what iOS reports after a call or an app switch */
+    if (ac && ac.state !== "running" && ac.state !== "closed") quiet(ac.resume());
   }
 });
 
@@ -508,18 +681,19 @@ function track(name){
 }
 
 /* ---------- timer ---------- */
-var T = { phases:[], i:0, endAt:0, left:0, paused:false, active:false, lastTick:-1, raf:0, workTotal:0, workIdx:0 };
+var T = { phases:[], after:[], i:0, endAt:0, left:0, paused:false, active:false, lastTick:-1, raf:0, workTotal:0, workIdx:0 };
 
 function startWorkout(){
+  closeEditor(true);
   T.phases = buildPhases();
   if (!T.phases.length) return;
   T.workTotal = T.phases.filter(function(p){ return p.t === "work"; }).length;
+  /* seconds remaining after each phase, so paint() doesn't re-sum the schedule every frame */
+  T.after = [];
+  for (var k = T.phases.length - 1, acc = 0; k >= 0; k--){ T.after[k] = acc; acc += T.phases[k].d; }
   track("start-workout");
 
-  try{
-    ac = new (window.AudioContext || window.webkitAudioContext)();
-    if (ac.state === "suspended") ac.resume();
-  }catch(e){ ac = null; }
+  wakeAudio();
 
   T.i = 0; T.paused = false; T.active = true; T.lastTick = -1;
   setup.style.display = "none";
@@ -529,7 +703,7 @@ function startWorkout(){
   buildPips();
   enterPhase(0, true);
   keepAwake(true);
-  loop();
+  kick();
 }
 
 function enterPhase(idx, silent, anchor){
@@ -539,6 +713,7 @@ function enterPhase(idx, silent, anchor){
   T.endAt = (typeof anchor === "number" ? anchor : performance.now()) + p.d * 1000;
   T.lastTick = -1;
   run.dataset.phase = p.t;
+  el("clock").classList.toggle("long", p.d >= 600);   /* sized per phase, so it doesn't jump at 9:59 */
   if (!silent) cue(p.t === "work" ? "work" : "rest");
 
   renderRunLabels();
@@ -559,8 +734,8 @@ function renderRunLabels(){
 
   if (!T.active){
     el("phase").textContent = t().doneTitle;
-    el("nextup").textContent = t().doneSub(S.rounds * S.sets, fmt(totalSeconds()));
-    el("remainLabel").textContent = t().left + " 0:00";
+    el("nextup").textContent = t().doneSub(S.rounds * S.sets, fmtLong(totalSeconds()));
+    put("remainLabel", t().left + " 0:00");
     return;
   }
 
@@ -574,20 +749,19 @@ function renderRunLabels(){
   el("nextup").textContent = nx ? t().next + t().phase[nx.t] + " " + fmtShort(nx.d) : t().finalRound;
 }
 
+var barFill = el("bar").firstElementChild;
+
 function paint(left){
   var p = T.phases[T.i];
-  el("clock").textContent = p.d >= 60 ? fmt(left) : String(Math.max(0, Math.ceil(left)));
+  put("clock", p.d >= 60 ? fmt(left) : String(Math.max(0, Math.ceil(left))));
   var frac = p.d > 0 ? Math.max(0, left / p.d) : 0;
-  el("bar").firstElementChild.style.transform = "scaleX(" + frac + ")";
-
-  var rest = left;
-  for (var k = T.i + 1; k < T.phases.length; k++) rest += T.phases[k].d;
-  el("remainLabel").textContent = t().left + " " + fmt(rest);
+  barFill.style.transform = "scaleX(" + frac + ")";
+  put("remainLabel", t().left + " " + fmtLong(left + T.after[T.i]));
 }
 
 function buildPips(){
   var box = el("pips");
-  box.innerHTML = "";
+  box.textContent = "";
   for (var k = 0; k < T.workTotal; k++) box.appendChild(document.createElement("i"));
 }
 function updatePips(){
@@ -604,8 +778,18 @@ function updatePips(){
   }
 }
 
+/* The frame loop only runs while the clock is actually moving. kick() starts it,
+   idle() stops it; it used to spin at 60fps through pauses and after finishing. */
+function kick(){
+  if (!T.raf) T.raf = requestAnimationFrame(loop);
+}
+function idle(){
+  cancelAnimationFrame(T.raf);
+  T.raf = 0;
+}
+
 function loop(){
-  T.raf = requestAnimationFrame(loop);
+  T.raf = 0;
   if (!T.active || T.paused) return;
 
   var now = performance.now(), guard = 0;
@@ -630,17 +814,20 @@ function loop(){
     T.lastTick = whole;
   }
   paint(left);
+  kick();
 }
 
 function finish(){
   T.active = false;
-  cancelAnimationFrame(T.raf);
+  idle();
   run.dataset.phase = "done";
-  el("clock").textContent = "✓";
-  el("bar").firstElementChild.style.transform = "scaleX(0)";
+  el("clock").classList.remove("long");
+  put("clock", "✓");
+  barFill.style.transform = "scaleX(0)";
   renderRunLabels();
   cue("done");
   keepAwake(false);
+  restAudio(1500);   /* after the finishing jingle */
   track("finish-workout");
 }
 
@@ -649,8 +836,10 @@ function togglePause(){
   T.paused = !T.paused;
   if (T.paused){
     T.left = (T.endAt - performance.now()) / 1000;
+    idle();
   } else {
     T.endAt = performance.now() + T.left * 1000;
+    kick();
   }
   keepAwake(true);
   run.classList.toggle("paused", T.paused);
@@ -659,8 +848,9 @@ function togglePause(){
 
 function stopWorkout(){
   T.active = false; T.paused = false;
-  cancelAnimationFrame(T.raf);
+  idle();
   keepAwake(false);
+  restAudio(0);
   run.classList.remove("on", "paused");
   setup.style.display = "";
   el("btnPause").textContent = pauseLabel();
@@ -676,8 +866,16 @@ el("btnSkip").addEventListener("click", function(){
 });
 el("stage").addEventListener("click", function(){ if (T.active) togglePause(); });
 document.addEventListener("keydown", function(e){
-  if (e.code === "Space"){ e.preventDefault(); if (run.classList.contains("on")) togglePause(); else startWorkout(); }
-  if (e.key === "Escape" && run.classList.contains("on")) stopWorkout();
+  var tag = e.target && e.target.tagName;
+  if (tag === "INPUT") return;   /* typing a value: keys belong to the field */
+  var running = run.classList.contains("on");
+  if (e.code === "Space"){
+    /* on the setup screen Space must activate whatever control has focus, not start the workout */
+    if (!running && (tag === "BUTTON" || tag === "A")) return;
+    e.preventDefault();
+    if (running) togglePause(); else startWorkout();
+  }
+  if (e.key === "Escape" && running) stopWorkout();
 });
 
 /* ---------- shared-settings URL (?p=10&w=20&r=10&rd=8&s=1&sr=60) ---------- */
@@ -689,13 +887,14 @@ document.addEventListener("keydown", function(e){
       if (!q.has(k)) continue;
       var v = parseInt(q.get(k), 10);
       FIELDS.forEach(function(f){
-        if (f.key === map[k] && !isNaN(v)) S[f.key] = Math.min(f.max, Math.max(f.min, v));
+        if (f.key === map[k] && !isNaN(v)) S[f.key] = clamp(v, f);
       });
     }
   }catch(e){}
 })();
 
 function shareSettings(){
+  closeEditor(true);
   track("share-link");
   var u = location.origin + location.pathname +
     "?p=" + S.prep + "&w=" + S.work + "&r=" + S.rest +

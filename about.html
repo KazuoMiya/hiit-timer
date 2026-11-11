@@ -20,8 +20,11 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <meta name="theme-color" content="#101319">
+<!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
+     Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
 <script data-goatcounter="https://nexuscode.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+        async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous"
+        integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"無料のインターバルタイマーは他にもたくさんある。なぜこれを使うのか？","acceptedAnswer":{"@type":"Answer","text":"開くコストがゼロだからです。ストアを開いてダウンロードして通知許可に答える工程が丸ごと無く、アプリには不可能な場所——ジムの壁のテレビ、ホテルの備え付けPC、借りたスマホ——でも動きます。合わなければタブを閉じるだけで、端末には何も残りません。"}},
@@ -152,7 +155,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <h2>できること</h2>
     <div class="grid">
       <div class="card"><b>4つのプリセット</b><span>タバタ 20秒/10秒×8、クラシック 40秒/20秒×10、ボクシング 3分/1分×3R、スプリント 30秒/30秒×6×2</span></div>
-      <div class="card"><b>すべて自由に設定</b><span>準備・運動・休憩・ラウンド数・セット数・セット間休憩。5秒刻みで調整できます</span></div>
+      <div class="card"><b>すべて自由に設定</b><span>準備・運動・休憩・ラウンド数・セット数・セット間休憩。＋/−で5秒刻み、数値をタップすれば直接入力もできます（1区間は最長60分）</span></div>
       <div class="card"><b>色で分かる</b>
         <div class="phase-chips"><i style="background:var(--prep)"></i><i style="background:var(--work)"></i><i style="background:var(--rest)"></i><i style="background:var(--setrest)"></i></div>
         <span>準備=黄 / 運動=赤 / 休憩=緑 / セット間=青。画面全体が切り替わるので、床に置いても部屋の反対側からでも分かります</span></div>
@@ -169,7 +172,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <h2>使い方</h2>
     <div class="steps">
       <div class="step"><span class="n"></span><div><h3>開く</h3><p><code>timer.nexus-code.studio</code> をブラウザで開きます。インストールも登録もありません。</p></div></div>
-      <div class="step"><span class="n"></span><div><h3>選ぶ・整える</h3><p>プリセットをタップするか、各項目の −/＋ で自分のメニューに調整します。上部に合計時間が表示されます。</p></div></div>
+      <div class="step"><span class="n"></span><div><h3>選ぶ・整える</h3><p>プリセットをタップするか、各項目の −/＋ で自分のメニューに調整します。数値そのものをタップすれば、分と秒を直接入力できます。上部に合計時間が表示されます。</p></div></div>
       <div class="step"><span class="n"></span><div><h3>開始する</h3><p>実行中は、画面のどこをタップしても一時停止。スペースキーでも同じです。スキップと終了はいつでも押せます。</p></div></div>
     </div>
 

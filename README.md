@@ -11,6 +11,18 @@ The first launch follows the device language; after that the choice is remembere
 All UI strings live in the `I18N` object in `index.html` — add a locale there and to the
 button group in the masthead to support another language.
 
+## Setting values
+
+Each value can be nudged with −/＋ or typed: tap the number (the dashed underline) and an
+editor opens — minutes and seconds as two boxes for time fields, since phone numeric keypads
+have no ":" key. Enter or tapping elsewhere commits, Escape cancels.
+
+`FIELDS` in `index.html` holds each field's min/max, and every route a value can take into
+the settings object (steppers, typed entry, shared-link parameters) is clamped against it.
+Typed input is reduced to ASCII digits first (full-width digits from a Japanese IME are
+converted), so nothing but an in-range integer ever reaches the state. Limits: prep 0–10:00,
+work 0:05–60:00, rest / set-rest 0–60:00, rounds 1–30, sets 1–10.
+
 ## Sharing settings
 
 "Share these settings as a link" under the Start button copies a URL that encodes the
@@ -38,6 +50,27 @@ skips localhost on its own, so local testing never reaches the real stats.
 Note that `sw.js` deliberately ignores cross-origin requests. Without that guard the
 cache-first handler would serve the analytics beacon from cache and counting would
 silently stop.
+
+The script is loaded as a pinned release with Subresource Integrity
+(`count.v5.js` + `integrity="sha384-…"`), not the floating `count.js`. The floating file
+changes without notice; a pinned one that is altered — by an update or by tampering — is
+refused by the browser rather than run. To move to a newer release, take the URL and hash
+from <https://www.goatcounter.com/help/countjs-versions> and check the hash yourself:
+
+```sh
+curl -s https://gc.zgo.at/count.v5.js | openssl dgst -sha384 -binary | openssl base64 -A
+```
+
+## Service worker rules
+
+`sw.js` is cache-first for same-origin GETs. Three rules keep that from going wrong:
+
+- only successful (`res.ok`) same-origin responses are stored — a cached 404 or 5xx would
+  be served forever, until the next cache-name bump;
+- lookups ignore the query string and query-string URLs are never stored, so a shared
+  link (`/?w=45&r=15`) is served from the cached `/` and works offline, instead of each
+  distinct link storing another full copy of the page;
+- the offline fallback to `index.html` applies to page navigations only.
 
 ## License
 

@@ -20,8 +20,11 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <meta name="theme-color" content="#101319">
+<!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
+     Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
 <script data-goatcounter="https://nexuscode.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+        async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous"
+        integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"There are hundreds of free interval timers. Why this one?","acceptedAnswer":{"@type":"Answer","text":"Because opening it costs nothing. There is no store page, no download, no notification prompt — and it works in places an app never can: the TV on a gym wall, a hotel laptop, a borrowed phone. If it's not for you, close the tab and nothing is left on your device."}},
@@ -143,7 +146,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <h2>What it does</h2>
     <div class="grid">
       <div class="card"><b>Four presets</b><span>Tabata 20s/10s ×8, Classic 40s/20s ×10, Boxing 3min/1min ×3R, Sprint 30s/30s ×6×2</span></div>
-      <div class="card"><b>Everything adjustable</b><span>Prep, work, rest, rounds, sets and rest between sets — tuned in 5-second steps</span></div>
+      <div class="card"><b>Everything adjustable</b><span>Prep, work, rest, rounds, sets and rest between sets. Nudge in 5-second steps, or tap a value to type it directly (up to 60 minutes per interval)</span></div>
       <div class="card"><b>Readable by colour</b>
         <div class="phase-chips"><i style="background:var(--prep)"></i><i style="background:var(--work)"></i><i style="background:var(--rest)"></i><i style="background:var(--setrest)"></i></div>
         <span>Prep is amber, work is red, rest is green, set-rest is blue. The whole screen changes, so it reads from across the room with the phone on the floor</span></div>
@@ -160,7 +163,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <h2>How to use it</h2>
     <div class="steps">
       <div class="step"><span class="n"></span><div><h3>Open it</h3><p>Go to <code>timer.nexus-code.studio</code> in any browser. Nothing to install, nothing to sign up for.</p></div></div>
-      <div class="step"><span class="n"></span><div><h3>Pick or tune</h3><p>Tap a preset, or shape your own workout with the −/＋ steppers. The total time shows at the top.</p></div></div>
+      <div class="step"><span class="n"></span><div><h3>Pick or tune</h3><p>Tap a preset, or shape your own workout with the −/＋ steppers. Tap any value to type minutes and seconds directly. The total time shows at the top.</p></div></div>
       <div class="step"><span class="n"></span><div><h3>Start</h3><p>While running, tap anywhere (or press Space) to pause. Skip and Stop are always available.</p></div></div>
     </div>
 
