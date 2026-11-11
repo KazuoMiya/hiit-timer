@@ -28,13 +28,23 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
+<link rel="preload" href="fonts/oswald-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400-latin1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600-latin1.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
      Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
 <script data-goatcounter="https://nexuscode.goatcounter.com/count"
         async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous"
         integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Fonts are served from this origin (no third-party request). Both are SIL OFL 1.1;
+   the licences travel with the files: fonts/OFL-Oswald.txt, fonts/OFL-IBM-Plex-Mono.txt */
+@font-face{font-family:'Oswald';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(fonts/oswald-latin-wght.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/ibm-plex-mono-400-latin1.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url(fonts/ibm-plex-mono-600-latin1.woff2) format('woff2')}
 
 :root{
   --ink:#101319;

@@ -19,6 +19,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
+<link rel="preload" href="fonts/oswald-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400-latin1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600-latin1.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="theme-color" content="#101319">
 <!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
      Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
@@ -30,7 +33,7 @@
 {"@type":"Question","name":"There are hundreds of free interval timers. Why this one?","acceptedAnswer":{"@type":"Answer","text":"Because opening it costs nothing. There is no store page, no download, no notification prompt — and it works in places an app never can: the TV on a gym wall, a hotel laptop, a borrowed phone. If it's not for you, close the tab and nothing is left on your device."}},
 {"@type":"Question","name":"You'll paywall it once it gets popular, right?","acceptedAnswer":{"@type":"Answer","text":"This timer collects no account and no email address, so there is structurally nothing to hold hostage later. Development is funded by optional tips only."}},
 {"@type":"Question","name":"Does the timer stop when the screen turns off?","acceptedAnswer":{"@type":"Answer","text":"On iOS, yes — that is a browser limitation. In return, the timer suppresses screen sleep three different ways while running, and if it ever does stop, it catches up to real elapsed time the moment you return, so phases never drift."}},
-{"@type":"Question","name":"My gym's basement has no signal. Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Open it once with a connection and a service worker stores the whole thing (about 31KB) on your device. After that it makes no network requests at all."}},
+{"@type":"Question","name":"My gym's basement has no signal. Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Open it once with a connection and a service worker stores the whole thing (about 150KB) on your device. After that it runs with no connection at all."}},
 {"@type":"Question","name":"It's one person's side project. What if it shuts down?","acceptedAnswer":{"@type":"Answer","text":"There is no server to shut down. A small set of files runs entirely on your device, and once it's stored there, it keeps working whether or not this site does."}}
 ]}
 </script>
@@ -42,7 +45,14 @@
   --util:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --line:#262C38; --grey:#8A93A6; --grey-2:#6C7488;
 }
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Fonts are served from this origin (no third-party request). Both are SIL OFL 1.1;
+   the licences travel with the files: fonts/OFL-Oswald.txt, fonts/OFL-IBM-Plex-Mono.txt */
+@font-face{font-family:'Oswald';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(fonts/oswald-latin-wght.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/ibm-plex-mono-400-latin1.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url(fonts/ibm-plex-mono-600-latin1.woff2) format('woff2')}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--ink);color:var(--bone);font-family:var(--util);line-height:1.9;-webkit-font-smoothing:antialiased}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px 80px}
@@ -152,7 +162,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
         <span>Prep is amber, work is red, rest is green, set-rest is blue. The whole screen changes, so it reads from across the room with the phone on the floor</span></div>
       <div class="card"><b>Beeps and vibration</b><span>A countdown for the last 3 seconds and a cue at every phase change, plus vibration on supported devices</span></div>
       <div class="card"><b>The screen stays on</b><span>Three layered wake-lock techniques keep the display awake while the timer runs</span></div>
-      <div class="card"><b>Works offline</b><span>After the first visit, the whole app (~31KB) is stored on your device and starts with zero signal</span></div>
+      <div class="card"><b>Works offline</b><span>After the first visit, the whole app (~150KB) is stored on your device and starts with zero signal</span></div>
       <div class="card"><b>Share settings as a link</b><span>Turn your workout into a URL and send it to a training partner. They just open it — no sign-up</span></div>
       <div class="card"><b>English / Japanese</b><span>Switch languages in the top-right corner; the choice is remembered on your device</span></div>
     </div>
@@ -182,7 +192,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
   <section>
     <div class="eyebrow">At the gym</div>
     <h2>Using it at the gym</h2>
-    <p><b>It works in the basement.</b> Open it once anywhere with signal, and from then on it makes no network requests. Dead zones and locker rooms don't matter.</p>
+    <p><b>It works in the basement.</b> Open it once anywhere with signal, and from then on it needs no connection. Dead zones and locker rooms don't matter.</p>
     <p><b>It works on the wall.</b> Open the URL in a smart TV's browser or on a monitor hooked to a laptop and it becomes a class clock the whole room can read. No special hardware.</p>
   </section>
 

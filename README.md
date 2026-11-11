@@ -61,6 +61,46 @@ from <https://www.goatcounter.com/help/countjs-versions> and check the hash your
 curl -s https://gc.zgo.at/count.v5.js | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 
+## Fonts
+
+Oswald (display) and IBM Plex Mono (text) are served from `fonts/` on this origin. Nothing
+is requested from Google Fonts or any other font host, so a visit discloses no IP address
+to a third party for typography, no stylesheet on another host blocks first paint, and the
+service worker precaches the files so the installed app keeps its typefaces offline.
+
+| File | Source | SHA-256 |
+| --- | --- | --- |
+| `oswald-latin-wght.woff2` | Google Fonts, Oswald v57, latin subset, variable `wght` 400–700 (font version 4.103) | `9dde3797547520f762f4ba3a822d417a0872b962bc78753a7ee9f955382b6b85` |
+| `ibm-plex-mono-400-latin1.woff2` | `@ibm/plex-mono` 2.5.0, `fonts/split/woff2/IBMPlexMono-Regular-Latin1.woff2` | `e8993d946649b9d01abb1ed06d574b19d8ea3e66b5c3948602db335c44c18e56` |
+| `ibm-plex-mono-600-latin1.woff2` | same package, `IBMPlexMono-SemiBold-Latin1.woff2` | `b7acd05041ab65f3b7039e218ddd893065e11a07e85ea85019473152a51b6b7d` |
+
+How each was checked before it was committed:
+
+- **IBM Plex Mono** comes from IBM's own npm package. The tarball's SHA-512 matched the
+  registry's `dist.integrity`
+  (`sha512-STBJIPxPomOYPmBMO7z5TKPJUotAF9u3gAUumTqVgwgrAO+K4FRNh0MlhsoJjKhJKsMbBJR10/bk4inkj/wc1w==`).
+  It was downloaded with `curl` and unpacked with `tar`, not `npm install` — the package
+  declares a `postinstall` telemetry script, and that way it never runs.
+- **Oswald** has no publisher checksum for the web subset. The file was taken from
+  `fonts.gstatic.com` (the URL the Google Fonts stylesheet hands to browsers) and compared
+  with the source font in `google/fonts` (`ofl/oswald/Oswald[wght].ttf`, git blob
+  `d1a3b9cb1325bf20b3a06ef9849d21c411212a3b`): same version string and metrics, and all
+  226 characters render pixel-identically at weights 400, 500, 600 and 700.
+
+Both families are under the SIL Open Font License 1.1. `fonts/OFL-Oswald.txt` and
+`fonts/OFL-IBM-Plex-Mono.txt` are the licence texts as shipped by each source; the licence
+requires them to travel with the fonts, so keep them published next to the files. IBM Plex
+has the Reserved Font Name "Plex" — use IBM's files as they are; a re-subset or converted
+copy may not keep the name.
+
+The `@font-face` rules are inlined in each of the three pages (a shared stylesheet would be
+one more blocking request). Do not go back to `@import`: it is only valid before every
+other rule, and the landing pages had it after `:root{}`, where browsers drop it without
+any error — those two pages rendered in fallback fonts until this was replaced.
+
+To change a font file: replace it, update the hash above, and bump the cache name in
+`sw.js` (the fonts are in its precache list).
+
 ## Service worker rules
 
 `sw.js` is cache-first for same-origin GETs. Three rules keep that from going wrong:
@@ -87,6 +127,7 @@ MIT — see [LICENSE](LICENSE).
 | `icon-192.png` / `icon-512.png` | Android and everything else |
 | `icon-maskable-512.png` | Maskable icon |
 | `about.html` / `about-en.html` | Landing page (JA / EN) with the embedded live demo |
+| `fonts/` | Self-hosted Oswald and IBM Plex Mono (WOFF2) with their OFL licence texts |
 | `_config.yml` | Keeps `README.md` and `LICENSE` off the published site (see below) |
 
 ## What is published

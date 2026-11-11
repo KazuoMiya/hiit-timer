@@ -19,6 +19,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
+<link rel="preload" href="fonts/oswald-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400-latin1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600-latin1.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="theme-color" content="#101319">
 <!-- Pinned release + SRI: a changed or tampered file is refused instead of run.
      Hash verified against the published one; see goatcounter.com/help/countjs-versions -->
@@ -30,7 +33,7 @@
 {"@type":"Question","name":"無料のインターバルタイマーは他にもたくさんある。なぜこれを使うのか？","acceptedAnswer":{"@type":"Answer","text":"開くコストがゼロだからです。ストアを開いてダウンロードして通知許可に答える工程が丸ごと無く、アプリには不可能な場所——ジムの壁のテレビ、ホテルの備え付けPC、借りたスマホ——でも動きます。合わなければタブを閉じるだけで、端末には何も残りません。"}},
 {"@type":"Question","name":"どうせ人気が出たら課金するのでは？","acceptedAnswer":{"@type":"Answer","text":"このタイマーはアカウントもメールアドレスも取得していないため、後から囲い込む手段が構造的にありません。運営は任意の支援のみで行っています。"}},
 {"@type":"Question","name":"画面を消したらタイマーは止まる？","acceptedAnswer":{"@type":"Answer","text":"iOSでは画面が完全に消えると進行が止まります。これはブラウザの制限です。その代わり実行中は3通りの方法で画面スリープを抑制し、万一止まっても画面に戻った瞬間に実際の経過時間へ追いつくため、フェーズがずれることはありません。"}},
-{"@type":"Question","name":"ジムの地下は電波が入らない。ネットが無くても動く？","acceptedAnswer":{"@type":"Answer","text":"一度電波のある場所で開けば、以後は完全にオフラインで動作します。Service Workerがファイル一式（約31KB）を端末に保存するため、二度目以降は通信を一切行いません。"}},
+{"@type":"Question","name":"ジムの地下は電波が入らない。ネットが無くても動く？","acceptedAnswer":{"@type":"Answer","text":"一度電波のある場所で開けば、以後は完全にオフラインで動作します。Service Workerがファイル一式（約150KB）を端末に保存するため、二度目以降は通信なしで起動します。"}},
 {"@type":"Question","name":"個人開発のサービスが終了したら使えなくなるのでは？","acceptedAnswer":{"@type":"Answer","text":"止まるサーバーがそもそも存在しません。小さなファイル1式が端末内で完結して動いており、一度端末に保存されたものは配信が止まってもそのまま動き続けます。"}}
 ]}
 </script>
@@ -42,7 +45,14 @@
   --util:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --line:#262C38; --grey:#8A93A6; --grey-2:#6C7488;
 }
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Fonts are served from this origin (no third-party request). Both are SIL OFL 1.1;
+   the licences travel with the files: fonts/OFL-Oswald.txt, fonts/OFL-IBM-Plex-Mono.txt */
+@font-face{font-family:'Oswald';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(fonts/oswald-latin-wght.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/ibm-plex-mono-400-latin1.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url(fonts/ibm-plex-mono-600-latin1.woff2) format('woff2')}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--ink);color:var(--bone);font-family:var(--util);line-height:1.9;-webkit-font-smoothing:antialiased}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px 80px}
@@ -161,7 +171,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
         <span>準備=黄 / 運動=赤 / 休憩=緑 / セット間=青。画面全体が切り替わるので、床に置いても部屋の反対側からでも分かります</span></div>
       <div class="card"><b>音とバイブで知らせる</b><span>残り3秒のカウントダウンと、フェーズの切り替わりでビープ音。対応端末ではバイブレーションも</span></div>
       <div class="card"><b>画面が消えない</b><span>実行中はWake Lock APIを含む3通りの方法で画面スリープを抑制します</span></div>
-      <div class="card"><b>オフラインで動く</b><span>一度開けば全ファイル（約31KB）が端末に保存され、以後は電波ゼロでも起動します</span></div>
+      <div class="card"><b>オフラインで動く</b><span>一度開けば全ファイル（約150KB）が端末に保存され、以後は電波ゼロでも起動します</span></div>
       <div class="card"><b>設定をURLで共有</b><span>作ったメニューをリンクにして送れます。受け取った人は開くだけ。登録は不要です</span></div>
       <div class="card"><b>日英切り替え</b><span>右上のボタンで日本語と英語を切り替え。選択は端末に記憶されます</span></div>
     </div>
@@ -191,7 +201,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
   <section>
     <div class="eyebrow">At the gym</div>
     <h2>ジムで使う</h2>
-    <p><b>地下でも動きます。</b>一度電波のある場所で開いておけば、以後の通信はゼロ。ロッカールームや地下フロアの電波状況は関係ありません。</p>
+    <p><b>地下でも動きます。</b>一度電波のある場所で開いておけば、以後は通信なしで動きます。ロッカールームや地下フロアの電波状況は関係ありません。</p>
     <p><b>壁のテレビでも動きます。</b>ブラウザ付きのスマートTVやPC接続のモニターでURLを開けば、そのまま全員から見えるクラス用の時計になります。専用機材は要りません。</p>
   </section>
 
@@ -230,7 +240,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>電波のないジムでも使える？</summary>
-      <p>使えます。一度電波のある場所で開けば、全ファイルが端末に保存され、以後は通信を一切しません。ホーム画面に追加しておけば、圏外でもアイコンから普通に起動します。</p>
+      <p>使えます。一度電波のある場所で開けば、全ファイルが端末に保存され、以後は通信なしで動きます。ホーム画面に追加しておけば、圏外でもアイコンから普通に起動します。</p>
     </details>
     <details>
       <summary>個人開発でしょう。終了したら困る。</summary>

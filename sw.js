@@ -1,4 +1,4 @@
-var CACHE = "hiit-timer-v14";
+var CACHE = "hiit-timer-v15";
 var ASSETS = [
   "./",
   "./index.html",
@@ -6,7 +6,10 @@ var ASSETS = [
   "./icon-180.png",
   "./icon-192.png",
   "./icon-512.png",
-  "./icon-maskable-512.png"
+  "./icon-maskable-512.png",
+  "./fonts/oswald-latin-wght.woff2",
+  "./fonts/ibm-plex-mono-400-latin1.woff2",
+  "./fonts/ibm-plex-mono-600-latin1.woff2"
 ];
 
 self.addEventListener("install", function(e){
@@ -36,8 +39,8 @@ self.addEventListener("activate", function(e){
 self.addEventListener("fetch", function(e){
   var req = e.request;
   if (req.method !== "GET") return;
-  /* Only own assets. Cross-origin (analytics beacons, fonts) must reach the
-     network every time — caching them would silently break counting. */
+  /* Only own assets. Cross-origin (the analytics beacon) must reach the
+     network every time — caching it would silently break counting. */
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   e.respondWith(
