@@ -8,7 +8,7 @@
      (a stale hash makes the browser refuse to run it). See README, "Content Security Policy". -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'none';
-  script-src 'sha256-irq77zi55twOe73Rxiad9a1a+BPppMXWJ1/VYXxFuTA=' https://gc.zgo.at;
+  script-src 'sha256-S/qsmB2aEcm0twzFeuLp81ubfXwxyw/Cmu2GGJCxAjY=' https://gc.zgo.at;
   style-src 'unsafe-inline';
   font-src 'self';
   img-src 'self' https://nexuscode.goatcounter.com;
@@ -19,7 +19,7 @@
   child-src 'self';
   base-uri 'none';
   form-action 'none'">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）</title>
 <meta name="description" content="無料・広告なし・インストール不要のHIIT/タバタ用インターバルタイマー。ブラウザで開くだけ、オフラインでも動作。Free, ad-free interval timer for HIIT &amp; Tabata — no install, works offline.">
 <link rel="canonical" href="https://timer.nexus-code.studio/">
@@ -76,7 +76,9 @@
   --util:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+/* touch-action:manipulation removes double-tap zoom, so fast taps on +/− stay taps,
+   while pinch zoom stays available to anyone who needs larger text */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{height:100%}
 body{
   background:var(--ink);
@@ -1000,7 +1002,6 @@ if ("serviceWorker" in navigator){
     navigator.serviceWorker.register("sw.js").catch(function(){});
   });
 }
-document.addEventListener("gesturestart", function(e){ e.preventDefault(); });
 })();
 </script>
 </body>

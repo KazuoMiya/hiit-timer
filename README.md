@@ -217,6 +217,14 @@ Opening the file directly via `file://` breaks both home screen install and offl
 
 If the screen still turns off, go to Settings → Display & Brightness → Auto-Lock → Never.
 
+## Zoom
+
+Pinch zoom is left on (no `user-scalable=no`, no `gesturestart` blocker) so that anyone who
+needs larger text can have it. What is turned off is double-tap zoom, through
+`touch-action: manipulation` on every element — otherwise two quick taps on ＋/− would
+zoom the page instead of stepping the value. Keep text inputs at 16px or larger, or iOS
+zooms the page on focus.
+
 ## Updating
 
 After editing files, bump the cache name on the first line of `sw.js`, then push.
