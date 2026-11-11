@@ -8,7 +8,7 @@
      (a stale hash makes the browser refuse to run it). See README, "Content Security Policy". -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'none';
-  script-src 'sha256-S/qsmB2aEcm0twzFeuLp81ubfXwxyw/Cmu2GGJCxAjY=' https://gc.zgo.at;
+  script-src 'sha256-Zs3JsB7VnIQKvwC8rFrdqUL2m5tDOUySzXikobVBQnY=' https://gc.zgo.at;
   style-src 'unsafe-inline';
   font-src 'self';
   img-src 'self' https://nexuscode.goatcounter.com;
@@ -611,6 +611,11 @@ function dropAudio(){
 }
 function wakeAudio(){
   dropAudio();
+  /* iOS Safari: ask for the "ambient" audio session by name. Cues then mix with whatever
+     the user is already playing instead of pausing it. Safari already picks ambient for a
+     page that only uses Web Audio; naming it keeps that from depending on a heuristic.
+     The price is the same either way: the iPhone's silent switch mutes the cues. */
+  try{ if (navigator.audioSession) navigator.audioSession.type = "ambient"; }catch(e){}
   try{
     ac = new (window.AudioContext || window.webkitAudioContext)();
     if (ac.state !== "running") quiet(ac.resume());
@@ -675,7 +680,10 @@ function keepAwake(on){
     }
   }catch(e){}
 
-  /* 3) silent keep-alive tone (keeps timing and audio running even if the screen locks) */
+  /* 3) near-silent tone. It does NOT keep the screen on, and it does not keep the timer
+        running once the screen locks. What it does is hold the audio output open between
+        cues, so a cue is not clipped while the output (Bluetooth earbuds especially) wakes
+        up. On iOS it plays in the same mixing "ambient" session as the cues. */
   try{
     if (on && ac && !silentOsc){
       silentOsc = ac.createOscillator();

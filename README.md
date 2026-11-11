@@ -217,6 +217,36 @@ Opening the file directly via `file://` breaks both home screen install and offl
 
 If the screen still turns off, go to Settings → Display & Brightness → Auto-Lock → Never.
 
+## Audio
+
+Cues are Web Audio oscillators; there is no `<audio>` element and the wake-lock video has
+no audio track. That matters on iOS, where the kind of audio a page plays decides how it
+shares the speaker with other apps:
+
+- A page that only uses Web Audio gets the **ambient** audio session. Ambient sound mixes
+  with whatever else is playing — it does not pause or lower a music app — and it is
+  muted by the iPhone's silent switch.
+- An audible `<audio>`/`<video>` element switches the page to the **playback** session,
+  which plays through the silent switch but pauses other apps' audio.
+
+So the trade is fixed by the platform: cues that leave the user's music alone are cues the
+silent switch can mute. This app takes the first side and says so explicitly with
+`navigator.audioSession.type = "ambient"` where Safari supports it, rather than relying on
+Safari's choice. Adding an audible media element would silently flip that — don't, unless
+the change is meant (a "sound through silent mode" option would be `type = "playback"`,
+and it stops the user's music).
+
+Sources: WebKit `MediaSessionManagerCocoa::updateSessionState()` (the category chosen per
+media type) and `DOMAudioSession.cpp` (the type-to-category mapping); WebKit bug 237322.
+None of this has been confirmed on a physical iPhone from this repo — check with music
+playing before claiming it anywhere.
+
+The near-silent 40 Hz tone that runs during a workout is not a wake lock and does not keep
+the timer alive once the screen locks. It holds the audio output open between cues so a
+cue's first milliseconds are not lost while the output wakes up.
+
+iOS has no `navigator.vibrate`, so there the cues are sound and colour only.
+
 ## Zoom
 
 Pinch zoom is left on (no `user-scalable=no`, no `gesturestart` blocker) so that anyone who

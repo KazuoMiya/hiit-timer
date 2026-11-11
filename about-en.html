@@ -46,7 +46,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"There are hundreds of free interval timers. Why this one?","acceptedAnswer":{"@type":"Answer","text":"Because opening it costs nothing. There is no store page, no download, no notification prompt — and it works in places an app never can: the TV on a gym wall, a hotel laptop, a borrowed phone. If it's not for you, close the tab and nothing is left on your device."}},
 {"@type":"Question","name":"You'll paywall it once it gets popular, right?","acceptedAnswer":{"@type":"Answer","text":"This timer collects no account and no email address, so there is structurally nothing to hold hostage later. Development is funded by optional tips only."}},
-{"@type":"Question","name":"Does the timer stop when the screen turns off?","acceptedAnswer":{"@type":"Answer","text":"On iOS, yes — that is a browser limitation. In return, the timer suppresses screen sleep three different ways while running, and if it ever does stop, it catches up to real elapsed time the moment you return, so phases never drift."}},
+{"@type":"Question","name":"Does the timer stop when the screen turns off?","acceptedAnswer":{"@type":"Answer","text":"On iOS, yes — that is a browser limitation. In return, the timer suppresses screen sleep two different ways while running, and if it ever does stop, it catches up to real elapsed time the moment you return, so phases never drift."}},
 {"@type":"Question","name":"My gym's basement has no signal. Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Open it once with a connection and a service worker stores the whole thing (about 150KB) on your device. After that it runs with no connection at all."}},
 {"@type":"Question","name":"It's one person's side project. What if it shuts down?","acceptedAnswer":{"@type":"Answer","text":"There is no server to shut down. A small set of files runs entirely on your device, and once it's stored there, it keeps working whether or not this site does."}}
 ]}
@@ -175,7 +175,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
         <div class="phase-chips"><i style="background:var(--prep)"></i><i style="background:var(--work)"></i><i style="background:var(--rest)"></i><i style="background:var(--setrest)"></i></div>
         <span>Prep is amber, work is red, rest is green, set-rest is blue. The whole screen changes, so it reads from across the room with the phone on the floor</span></div>
       <div class="card"><b>Beeps and vibration</b><span>A countdown for the last 3 seconds and a cue at every phase change, plus vibration on supported devices</span></div>
-      <div class="card"><b>The screen stays on</b><span>Three layered wake-lock techniques keep the display awake while the timer runs</span></div>
+      <div class="card"><b>The screen stays on</b><span>Two layered wake-lock techniques keep the display awake while the timer runs</span></div>
       <div class="card"><b>Works offline</b><span>After the first visit, the whole app (~150KB) is stored on your device and starts with zero signal</span></div>
       <div class="card"><b>Share settings as a link</b><span>Turn your workout into a URL and send it to a training partner. They just open it — no sign-up</span></div>
       <div class="card"><b>English / Japanese</b><span>Switch languages in the top-right corner; the choice is remembered on your device</span></div>
@@ -215,7 +215,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     <h2>What it can't do — said upfront</h2>
     <div class="grid">
       <div class="card"><b>On iOS it stops if the screen turns off</b><span>That's a browser limitation we can't work around. In exchange, the timer suppresses sleep while running, and if it ever does stop, it catches up to real elapsed time the moment you return — phases never drift. If your screen still sleeps: Settings → Display &amp; Brightness → Auto-Lock → Never.</span></div>
-      <div class="card"><b>Your music volume may dip</b><span>Running it alongside a music app can lower the music's volume. We're investigating; this page will say so when it's fixed.</span></div>
+      <div class="card"><b>No beeps in iPhone silent mode</b><span>While your iPhone is in silent mode, the cue beeps are muted — that is how Safari treats sound from a web page. Turn silent mode off to hear them. The colours and the countdown work as usual.</span></div>
       <div class="card"><b>No workout history</b><span>Nothing is stored by design, so there is no log of past sessions.</span></div>
     </div>
   </section>
@@ -241,7 +241,7 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
     </details>
     <details>
       <summary>Does it stop when the screen turns off?</summary>
-      <p>On iOS, yes — we won't hide that. It's a browser limitation. In return the timer suppresses screen sleep three different ways, and if it ever does stop, it snaps forward to real elapsed time when you return, so you're never "three rounds behind".</p>
+      <p>On iOS, yes — we won't hide that. It's a browser limitation. In return the timer suppresses screen sleep two different ways, and if it ever does stop, it snaps forward to real elapsed time when you return, so you're never "three rounds behind".</p>
     </details>
     <details>
       <summary>Does it work with no signal?</summary>
