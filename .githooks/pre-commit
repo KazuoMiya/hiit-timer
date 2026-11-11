@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Keeps each page's Content-Security-Policy in step with its inline scripts.
+
+A page's CSP lists the SHA-256 of every inline <script> it may run. Edit a script
+without updating that hash and the browser refuses to run it: the page loads and the
+app is dead. This hook stops such a commit.
+
+    .githooks/pre-commit          check what is staged (git runs this on commit)
+    .githooks/pre-commit --fix    rewrite the hashes in the working files, then re-add
+
+Enable once per clone:  git config core.hooksPath .githooks
+"""
+import base64, hashlib, re, subprocess, sys
+
+PAGES = ["index.html", "about.html", "about-en.html"]
+SCRIPT = re.compile(r"<script(\s[^>]*)?>(.*?)</script>", re.S | re.I)
+META = re.compile(r'(<meta http-equiv="Content-Security-Policy"\s+content=")([^"]*)(")', re.I)
+HASH = re.compile(r"'sha256-[A-Za-z0-9+/=]+'")
+JS_TYPES = ("", "text/javascript", "module")
+
+
+def inline_hashes(html):
+    out = []
+    for m in SCRIPT.finditer(html):
+        attrs = m.group(1) or ""
+        if re.search(r"\bsrc\s*=", attrs):
+            continue
+        t = re.search(r"\btype\s*=\s*[\"']([^\"']*)[\"']", attrs)
+        if t and t.group(1).strip().lower() not in JS_TYPES:
+            continue  # a data block such as JSON-LD is never executed, so CSP ignores it
+        digest = hashlib.sha256(m.group(2).encode("utf-8")).digest()
+        out.append("'sha256-" + base64.b64encode(digest).decode() + "'")
+    return out
+
+
+def script_src(policy):
+    for d in policy.split(";"):
+        if d.split()[:1] == ["script-src"]:
+            return d
+    return None
+
+
+def problems(name, html):
+    if "\r" in html:
+        return ["%s: has CR line endings; browsers hash the script with LF only" % name]
+    m = META.search(html)
+    if not m:
+        return ["%s: no Content-Security-Policy meta tag" % name]
+    d = script_src(m.group(2))
+    if d is None:
+        return ["%s: the policy has no script-src directive" % name]
+    want, have = set(inline_hashes(html)), set(HASH.findall(d))
+    out = ["%s: inline script is not allowed by its own policy (missing %s)" % (name, h) for h in sorted(want - have)]
+    out += ["%s: policy allows a script that is no longer in the page (%s)" % (name, h) for h in sorted(have - want)]
+    return out
+
+
+def fixed(html):
+    m = META.search(html)
+    if not m or script_src(m.group(2)) is None:
+        return html
+    old = script_src(m.group(2))
+    rest = HASH.sub("", old).split()[1:]
+    lead = old[: len(old) - len(old.lstrip())]
+    new = lead + " ".join(["script-src"] + inline_hashes(html) + rest)
+    return html[: m.start(2)] + m.group(2).replace(old, new, 1) + html[m.end(2):]
+
+
+def main():
+    fix = "--fix" in sys.argv[1:]
+    bad = []
+    for name in PAGES:
+        if fix:
+            with open(name, encoding="utf-8", newline="") as f:
+                html = f.read()
+            new = fixed(html)
+            if new != html:
+                with open(name, "w", encoding="utf-8", newline="") as f:
+                    f.write(new)
+                print("updated script hashes in " + name)
+            bad += problems(name, new)
+        else:
+            r = subprocess.run(["git", "show", ":" + name], capture_output=True)
+            if r.returncode != 0:
+                continue  # not in the index (deleted or never added)
+            bad += problems(name, r.stdout.decode("utf-8"))
+    if bad:
+        sys.stderr.write("\n".join(bad) + "\n")
+        if not fix:
+            sys.stderr.write("\nRun  .githooks/pre-commit --fix  then  git add  the changed pages.\n")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

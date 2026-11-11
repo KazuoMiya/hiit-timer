@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Content Security Policy. GitHub Pages cannot send response headers, so it is set here.
+     Everything is denied unless listed; this page runs no script of its own, only the
+     pinned analytics file. See README, "Content Security Policy". -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src https://gc.zgo.at;
+  style-src 'unsafe-inline';
+  font-src 'self';
+  img-src 'self' https://nexuscode.goatcounter.com;
+  connect-src https://nexuscode.goatcounter.com;
+  frame-src 'self';
+  child-src 'self';
+  base-uri 'none';
+  form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How to use &amp; FAQ | HIIT Timer — the interval timer you don't install</title>
 <meta name="description" content="A free HIIT/Tabata interval timer that runs in the browser. How to use it, add it to your home screen, use it offline, and share workouts as links. No install, no account, no ads.">

@@ -101,6 +101,53 @@ any error — those two pages rendered in fallback fonts until this was replaced
 To change a font file: replace it, update the hash above, and bump the cache name in
 `sw.js` (the fonts are in its precache list).
 
+## Content Security Policy
+
+Each page carries its policy in a `<meta http-equiv="Content-Security-Policy">` tag at the
+top of `<head>`, because GitHub Pages cannot send response headers. It starts from
+`default-src 'none'` and lists only what the page uses:
+
+| Directive | Allows | Why |
+| --- | --- | --- |
+| `script-src` | the app's own inline script (by SHA-256), `https://gc.zgo.at` | the timer itself; the pinned analytics file |
+| `style-src 'unsafe-inline'` | the inline `<style>` block | see the note below |
+| `font-src 'self'` | `fonts/` | self-hosted fonts |
+| `img-src`, `connect-src` | this origin's icons; `https://nexuscode.goatcounter.com` | the analytics beacon (`sendBeacon`, with an image fallback) |
+| `media-src data:` | the embedded silent video | the screen wake-lock fallback |
+| `manifest-src`, `worker-src`, `child-src` `'self'` | manifest and service worker (`child-src` covers Safari before 15.5) | install and offline |
+| `frame-src 'self'` (landing pages) | the live demo iframe | |
+| `base-uri 'none'`, `form-action 'none'` | nothing | neither is used |
+
+So an injected `<script>`, an inline event handler, `eval`, a script from any other host and
+a request to any other host are all refused by the browser.
+
+**The script hash must match the script.** `index.html` allows its inline script by hash,
+which keeps the app a single file. Change one character of that script without updating
+the hash and the browser will not run it — the page loads and nothing works. So:
+
+```sh
+git config core.hooksPath .githooks   # once per clone
+.githooks/pre-commit --fix            # after editing the inline script: rewrites the hash
+```
+
+With the hook enabled, a commit whose hash is stale is refused and tells you to run
+`--fix`. Editing through the GitHub web UI bypasses the hook — don't edit `index.html`
+there. JSON-LD blocks are data, not script, and need no hash.
+
+Styles are allowed inline without a hash on purpose. Hashing them would add the same
+"stale hash breaks the page" failure to all three pages on every CSS tweak, in exchange for
+blocking style injection on a site with no user-supplied content and nothing secret in the
+DOM. The script side, where the real risk is, is strict.
+
+What a meta tag cannot do: `frame-ancestors` (who may embed the page), violation
+reporting, and every non-CSP header — `Strict-Transport-Security`,
+`X-Content-Type-Options`, `Permissions-Policy`. Those need a host that lets you set
+response headers. Pages does redirect HTTP to HTTPS.
+
+When adding anything that loads from a new place (a script, an image host, an API), add it
+to the policy in the same change, and check the browser console for
+"Content Security Policy" errors before pushing.
+
 ## Service worker rules
 
 `sw.js` is cache-first for same-origin GETs. Three rules keep that from going wrong:
@@ -128,6 +175,7 @@ MIT — see [LICENSE](LICENSE).
 | `icon-maskable-512.png` | Maskable icon |
 | `about.html` / `about-en.html` | Landing page (JA / EN) with the embedded live demo |
 | `fonts/` | Self-hosted Oswald and IBM Plex Mono (WOFF2) with their OFL licence texts |
+| `.githooks/pre-commit` | Refuses a commit whose inline-script hash is stale; `--fix` rewrites it |
 | `_config.yml` | Keeps `README.md` and `LICENSE` off the published site (see below) |
 
 ## What is published
@@ -172,6 +220,8 @@ If the screen still turns off, go to Settings → Display & Brightness → Auto-
 ## Updating
 
 After editing files, bump the cache name on the first line of `sw.js`, then push.
+If the inline script in `index.html` changed, run `.githooks/pre-commit --fix` first
+(see Content Security Policy above).
 
 ```js
 var CACHE = "hiit-timer-v2";   // v1 → v2

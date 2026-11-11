@@ -2,6 +2,20 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<!-- Content Security Policy. GitHub Pages cannot send response headers, so it is set here.
+     Everything is denied unless listed; this page runs no script of its own, only the
+     pinned analytics file. See README, "Content Security Policy". -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src https://gc.zgo.at;
+  style-src 'unsafe-inline';
+  font-src 'self';
+  img-src 'self' https://nexuscode.goatcounter.com;
+  connect-src https://nexuscode.goatcounter.com;
+  frame-src 'self';
+  child-src 'self';
+  base-uri 'none';
+  form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>使い方とFAQ｜HIITタイマー — アプリを入れないインターバルタイマー</title>
 <meta name="description" content="ブラウザで開くだけのHIIT/タバタ用インターバルタイマーの使い方。ホーム画面への追加手順、オフライン利用、設定のURL共有、よくある質問。無料・広告なし・アカウント不要。">

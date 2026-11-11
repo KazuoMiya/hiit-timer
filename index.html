@@ -2,6 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Content Security Policy. GitHub Pages cannot send response headers, so it is set here.
+     Everything is denied unless listed. The hash in script-src is the inline script at the
+     bottom of this file: after editing that script run  .githooks/pre-commit --fix
+     (a stale hash makes the browser refuse to run it). See README, "Content Security Policy". -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src 'sha256-irq77zi55twOe73Rxiad9a1a+BPppMXWJ1/VYXxFuTA=' https://gc.zgo.at;
+  style-src 'unsafe-inline';
+  font-src 'self';
+  img-src 'self' https://nexuscode.goatcounter.com;
+  connect-src https://nexuscode.goatcounter.com;
+  media-src data:;
+  manifest-src 'self';
+  worker-src 'self';
+  child-src 'self';
+  base-uri 'none';
+  form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>HIITタイマー｜アプリを入れないインターバルタイマー（無料・広告なし）</title>
 <meta name="description" content="無料・広告なし・インストール不要のHIIT/タバタ用インターバルタイマー。ブラウザで開くだけ、オフラインでも動作。Free, ad-free interval timer for HIIT &amp; Tabata — no install, works offline.">
