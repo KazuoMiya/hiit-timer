@@ -86,7 +86,15 @@ MIT — see [LICENSE](LICENSE).
 | `icon-180.png` | iOS home screen icon |
 | `icon-192.png` / `icon-512.png` | Android and everything else |
 | `icon-maskable-512.png` | Maskable icon |
-| `.nojekyll` | Disables Jekyll processing on GitHub Pages |
+| `about.html` / `about-en.html` | Landing page (JA / EN) with the embedded live demo |
+| `_config.yml` | Keeps `README.md` and `LICENSE` off the published site (see below) |
+
+## What is published
+
+GitHub Pages serves this branch through Jekyll with nothing to render: every file is copied
+as-is except the ones listed under `exclude` in `_config.yml`, and dotfiles. That is what
+keeps this README and the LICENSE from being reachable at the product's own URL. Do not
+add a `.nojekyll` file back — it turns Jekyll off, which publishes every file in the repo.
 
 ## Publishing on GitHub Pages
 

@@ -1,0 +1,6 @@
+# The site is plain static files; nothing here is rendered by Jekyll.
+# This file exists only to keep repository housekeeping files from being
+# served on the product domain (with .nojekyll, every file in the repo was public).
+exclude:
+  - README.md
+  - LICENSE
